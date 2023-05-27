@@ -77,11 +77,11 @@ pytest
 ```
 python manage.py runserver
 # open link:
-http://127.0.0.1:8000/redoc/
+http://127.0.0.1/api/docs/redoc.html
 ```
-## Примеры работы с API для всех пользователей (TODO)
+## Примеры работы с API для всех пользователей
 
-Подробная документация доступна по эндпоинту /redoc/
+Подробная документация доступна по эндпоинту /api/docs/redoc.html
 
 Для неавторизованных пользователей работа с API доступна в режиме чтения, что-либо изменить или создать не получится.
 
@@ -143,5 +143,23 @@ POST /api/v1/categories/
   "slug": "string"
 }
 ```
+
+### Сборка проекта
+
+Для сборки проекта необходимо установить docker согласно 
+[инструкции](https://docs.docker.com/engine/install/ubuntu/).
+
+А также установить docker compose:
+```
+sudo apt update
+sudo apt install docker-compose
+```
+
+Запуск frontend локально:
+```
+cd infra
+docker-compose up
+```
+
 ### Авторы
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
