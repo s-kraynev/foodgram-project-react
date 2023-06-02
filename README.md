@@ -44,11 +44,10 @@ python manage.py migrate titles
 python manage.py migrate
 
 ```
-(TODO)
 Загрузка тестовых данных из csv файлов
 
 ```
-python manage.py loadcsv ./static/data/
+python .\manage.py loadcsv ../data
 ```
 
 Секретный ключ

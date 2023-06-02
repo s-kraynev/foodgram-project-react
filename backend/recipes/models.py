@@ -32,12 +32,20 @@ class Tag(models.Model):
 class MeasurementUnit(models.Model):
     unit = models.CharField('Единица измерения', max_length=200)
 
+    class Meta:
+        verbose_name = 'Единица измерения'
+        verbose_name_plural = 'Единицы измерения'
+
+    def __str__(self):
+        return self.unit
+
 
 class Ingredient(models.Model):
     measurement_unit = models.ForeignKey(
         MeasurementUnit,
         related_name='ingredient',
         on_delete=models.CASCADE,
+        unique=False,
     )
     name = models.CharField("Название", max_length=200)
 
@@ -75,6 +83,13 @@ class Recipe(models.Model):
         Ingredient,
         through="UsedIngredient"
     )
+
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
 
 
 class UsedIngredient(models.Model):
@@ -128,6 +143,13 @@ class Favorite(models.Model):
         related_name='favorite_recipe'
     )
 
+    class Meta:
+        verbose_name = 'Любимый рецепт'
+        verbose_name_plural = 'Любимые рецепты'
+
+    def __str__(self):
+        return f'{self.recipe} is favorite for {self.user}'
+
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
@@ -140,3 +162,10 @@ class ShoppingCart(models.Model):
         on_delete=models.CASCADE,
         related_name='shopping_recipe'
     )
+
+    class Meta:
+        verbose_name = 'Покупка'
+        verbose_name_plural = 'Покупки'
+
+    def __str__(self):
+        return f'{self.user} buy {self.recipe}'
