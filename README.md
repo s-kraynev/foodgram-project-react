@@ -33,14 +33,13 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-(TODO)
 Выполнить миграции:
 
 ```
 python manage.py makemigrations users
-python manage.py makemigrations titles
+python manage.py makemigrations recipes
 python manage.py migrate users
-python manage.py migrate titles
+python manage.py migrate recipes
 python manage.py migrate
 
 ```

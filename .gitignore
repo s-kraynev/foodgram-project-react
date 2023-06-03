@@ -133,3 +133,4 @@ dmypy.json
 
 # migrations
 backend/recipes/migrations
+backend/users/migrations
