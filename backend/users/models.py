@@ -1,44 +1,31 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
 
 
 class User(AbstractUser):
-    USER = 'user'
-    ADMIN = 'admin'
-    ROLES = (
-        (USER, 'User'),
-        (ADMIN, 'Admin'),
+    first_name = models.CharField(
+        max_length=settings.MID_SMALL_INT_LENGTH,
+
+    )
+    last_name = models.CharField(
+        max_length=settings.MID_SMALL_INT_LENGTH,
     )
     email = models.EmailField(
-        blank=False,
-        max_length=100,
-        unique=True,
+        unique=True
     )
-    role = models.CharField(
-        max_length=20,
-        choices=ROLES,
-        default=USER,
+    password = models.CharField(
+        max_length=settings.MID_SMALL_INT_LENGTH,
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     class Meta:
-        # use ordering, because without we get warning in tests:
-        # UnorderedObjectListWarning: Pagination may yield inconsistent
-        # results with an unordered object_list
         ordering = ('id',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username
-
-    def clean(self):
-        super().clean()
-        if self.username == 'me':
-            raise ValidationError(
-                'Имя пользователя содержит недопустимый символ'
-            )
-
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser

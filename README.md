@@ -36,17 +36,14 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-python manage.py makemigrations users
-python manage.py makemigrations recipes
-python manage.py migrate users
-python manage.py migrate recipes
+python manage.py makemigrations users recipes
 python manage.py migrate
 
 ```
 Загрузка тестовых данных из csv файлов
 
 ```
-python .\manage.py loadcsv ../data
+python manage.py loadcsv ../data
 ```
 
 Секретный ключ
