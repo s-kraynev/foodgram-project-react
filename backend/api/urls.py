@@ -6,18 +6,18 @@ from rest_framework.routers import DefaultRouter
 from api.views import (
     TagsViewSet,
     RecipeViewSet,
+    IngredientViewSet,
+    SubscriptionViewSet,
 )
 
 router = DefaultRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'tags', TagsViewSet, basename='tags')
+router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 #router.register(
-#    r'titles/(?P<title_id>\d+)/reviews', ReviewViewSet, basename='reviews'
-#)
+#    r'subscriptions', SubscriptionViewSet, basename='subscriptions')
 #router.register(
-#    r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
-#    CommentViewSet,
-#    basename='comments',
+#    r'users/(?P<id>\d+)/subscribe', SubscriptionViewSet, basename='subscribe'
 #)
 
 user_patterns = [
@@ -26,6 +26,14 @@ user_patterns = [
     path('me/', UserViewSet.as_view({'get': 'me'}), name='me'),
     path('set_password/', UserViewSet.as_view({'post': 'set_password'}),
          name='set_password'),
+    path('subscriptions/', SubscriptionViewSet.as_view({'get', 'list'}),
+         name='get_subscriptions'),
+    re_path('(?P<id>[^/.]+)/subscribe/$',
+         SubscriptionViewSet.as_view({'post', 'create'}),
+         name='subscribe'),
+    re_path('(?P<id>[^/.]+)/subscribe/$',
+         SubscriptionViewSet.as_view({'delete', 'destroy'}),
+         name='unsubscribe'),
     re_path('(?P<id>[^/.]+)/$', UserViewSet.as_view({'get': 'retrieve'}),
             name='get_user'),
 ]

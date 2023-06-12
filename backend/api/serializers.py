@@ -170,3 +170,13 @@ class IngredientSerializer(serializers.ModelSerializer):
             'id', 'name', 'measurement_unit',
         )
 
+
+class FollowSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=True)
+    author = UserSerializer(required=True)
+
+    class Meta:
+        model = Ingredient
+        fields = (
+            'id', 'user', 'author',
+        )

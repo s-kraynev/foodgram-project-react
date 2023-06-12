@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api.mixins import (
+    CreateDestroyListViewSet,
     ListRetrieveViewSet,
     DenyPutViewSet,
     DenyPutPatchViewSet,
@@ -21,12 +22,13 @@ from api.permissions import (
 )
 from api.serializers import (
     RegisterSerializer,
+    FollowSerializer,
     UserSerializer,
     IngredientSerializer,
     RecipeSerializer,
     TagSerializer,
 )
-from recipes.models import Tag, Recipe
+from recipes.models import Ingredient, Tag, Recipe, Follow
 
 User = get_user_model()
 
@@ -41,3 +43,17 @@ class RecipeViewSet(DenyPutViewSet):
     serializer_class = RecipeSerializer
     permission_classes = (IsAdminAuthorOrReadOnly,)
     queryset = Recipe.objects.all()
+
+
+class IngredientViewSet(ListRetrieveViewSet):
+    serializer_class = IngredientSerializer
+    permission_classes = (permissions.AllowAny,)
+    queryset = Ingredient.objects.all()
+
+
+class SubscriptionViewSet(CreateDestroyListViewSet):
+    serializer_class = FollowSerializer
+    permission_classes = (permissions.AllowAny,)
+    queryset = Follow.objects.all()
+
+

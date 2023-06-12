@@ -15,6 +15,12 @@ class ListRetrieveViewSet(
     pass
 
 
+class CreateDestroyListViewSet(
+    GenericViewSet, CreateModelMixin, DestroyModelMixin, ListModelMixin
+):
+    pass
+
+
 class DenyPutViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.get('partial', False)
