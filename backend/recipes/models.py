@@ -57,6 +57,19 @@ class Ingredient(models.Model):
         return self.name
 
 
+class UsedIngredient(models.Model):
+    amount = models.PositiveIntegerField(
+        "Количество",
+        validators=(MinValueValidator(1),),
+        error_messages={'validators': 'Количество не может быть меньше 1!'},
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name="used_ingredient",
+        on_delete=models.CASCADE,
+    )
+
+
 class Recipe(models.Model):
 
     author = models.ForeignKey(
@@ -75,14 +88,9 @@ class Recipe(models.Model):
         default=None,
     )
     text = models.TextField("Описание")
-    tags = models.ManyToManyField(
-        Tag,
-    )
+    tags = models.ManyToManyField(Tag)
     cooking_time = models.IntegerField("Время готовки (минут)")
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        through="UsedIngredient"
-    )
+    ingredients = models.ManyToManyField(UsedIngredient)
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -90,24 +98,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class UsedIngredient(models.Model):
-    ingredient = models.ForeignKey(
-        Ingredient,
-        related_name="used_ingredient",
-        on_delete=models.CASCADE,
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        related_name="recipe",
-        on_delete=models.CASCADE,
-    )
-    amount = models.PositiveIntegerField(
-        "Количество",
-        validators=(MinValueValidator(1),),
-        error_messages={'validators': 'Количество не может быть меньше 1!'},
-    )
 
 
 class Follow(models.Model):

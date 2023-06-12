@@ -79,9 +79,9 @@ def get_recipes(data):
             ingr_data = {
                 'ingredient': Ingredient.objects.get(id=ingredient_id),
                 'amount': amount,
-                'recipe': created_recipe,
             }
-            UsedIngredient.objects.create(**ingr_data)
+            used_ingredient = UsedIngredient.objects.create(**ingr_data)
+            created_recipe.ingredients.add(used_ingredient)
 
 
 def get_favorites(data):

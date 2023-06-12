@@ -9,23 +9,23 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from api.mixins import (
+from .mixins import (
     CreateDestroyListViewSet,
     ListRetrieveViewSet,
     DenyPutViewSet,
     DenyPutPatchViewSet,
 )
-from api.permissions import (
+from .permissions import (
     IsAdmin,
     IsAdminAuthorOrReadOnly,
     IsAdminOrReadOnly,
 )
-from api.serializers import (
-    RegisterSerializer,
+from .serializers import (
     FollowSerializer,
     UserSerializer,
     IngredientSerializer,
-    RecipeSerializer,
+    ReadRecipeSerializer,
+    WriteRecipeSerializer,
     TagSerializer,
 )
 from recipes.models import Ingredient, Tag, Recipe, Follow
@@ -37,18 +37,38 @@ class TagsViewSet(ListRetrieveViewSet):
     serializer_class = TagSerializer
     permission_classes = (permissions.AllowAny,)
     queryset = Tag.objects.all()
+    pagination_class = None
 
 
 class RecipeViewSet(DenyPutViewSet):
-    serializer_class = RecipeSerializer
-    permission_classes = (IsAdminAuthorOrReadOnly,)
     queryset = Recipe.objects.all()
+    #permission_classes = (permissions.Is,)
+
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            permission_classes = [permissions.AllowAny]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'partial_update'):
+            return WriteRecipeSerializer
+        elif self.action in ('list', 'retrieve'):
+            return ReadRecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class IngredientViewSet(ListRetrieveViewSet):
     serializer_class = IngredientSerializer
     permission_classes = (permissions.AllowAny,)
     queryset = Ingredient.objects.all()
+    pagination_class = None
+    # TODO: не работает с русскими символами
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 
 class SubscriptionViewSet(CreateDestroyListViewSet):
