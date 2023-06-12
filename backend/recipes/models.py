@@ -78,7 +78,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
     )
-    cooking_time = models.TimeField("Время готовки")
+    cooking_time = models.IntegerField("Время готовки (минут)")
     ingredients = models.ManyToManyField(
         Ingredient,
         through="UsedIngredient"

@@ -1,0 +1,6 @@
+id,username,email,first_name,last_name,password
+100,bingobongo,bingobongo@yamdb.fake,имя1,фамилия1,pbkdf2_sha256$260000$YBnyAa2MeSLSgTAsJzyot3$JWhYIKc7Q/eLkeIjXGYXp5st3jncW56bJjnFUHB8qUA=
+101,capt_obvious,capt_obvious@yamdb.fake,имя2,фамилия2,pbkdf2_sha256$260000$YBnyAa2MeSLSgTAsJzyot3$JWhYIKc7Q/eLkeIjXGYXp5st3jncW56bJjnFUHB8qUA=
+102,faust,faust@yamdb.fake,имя3,фамилия3,pbkdf2_sha256$260000$YBnyAa2MeSLSgTAsJzyot3$JWhYIKc7Q/eLkeIjXGYXp5st3jncW56bJjnFUHB8qUA=
+103,reviewer,reviewer@yamdb.fake,имя4,фамилия4,pbkdf2_sha256$260000$YBnyAa2MeSLSgTAsJzyot3$JWhYIKc7Q/eLkeIjXGYXp5st3jncW56bJjnFUHB8qUA=
+104,angry,angry@yamdb.fake,имя11,фамилия11,pbkdf2_sha256$260000$YBnyAa2MeSLSgTAsJzyot3$JWhYIKc7Q/eLkeIjXGYXp5st3jncW56bJjnFUHB8qUA=
