@@ -9,6 +9,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
+from .filters import IngredientFilter, RecipeFilter
 from .mixins import (
     CreateDestroyListViewSet,
     ListRetrieveViewSet,
@@ -42,7 +43,8 @@ class TagsViewSet(ListRetrieveViewSet):
 
 class RecipeViewSet(DenyPutViewSet):
     queryset = Recipe.objects.all()
-    #permission_classes = (permissions.Is,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
@@ -66,9 +68,8 @@ class IngredientViewSet(ListRetrieveViewSet):
     permission_classes = (permissions.AllowAny,)
     queryset = Ingredient.objects.all()
     pagination_class = None
-    # TODO: не работает с русскими символами
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
 
 
 class SubscriptionViewSet(CreateDestroyListViewSet):

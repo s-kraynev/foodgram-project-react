@@ -91,6 +91,8 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag)
     cooking_time = models.IntegerField("Время готовки (минут)")
     ingredients = models.ManyToManyField(UsedIngredient)
+    # TODO: add pub date для сортировки их на главной странице по дате
+    #pub_date =
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -98,6 +100,14 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+    @staticmethod
+    def is_favorited(recipe, user):
+        return Favorite.objects.filter(recipe=recipe, user=user).exists()
+
+    @staticmethod
+    def is_in_shopping_cart(recipe, user):
+        return ShoppingCart.objects.filter(recipe=recipe, user=user).exists()
 
 
 class Follow(models.Model):
