@@ -27,8 +27,3 @@ class DenyPutViewSet(ModelViewSet):
         if not partial:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
-
-
-class DenyPutPatchViewSet(ModelViewSet):
-    def update(self, request, *args, **kwargs):
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

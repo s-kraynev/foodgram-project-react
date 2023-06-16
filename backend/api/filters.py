@@ -38,8 +38,11 @@ class RecipeFilter(FilterSet):
         if is_in_shopping_cart is not None:
             queryset = queryset.filter(shopping_recipe__user=self.request.user)
 
-        tags = self.data.getlist('tags')
+        tags = self.data.get('tags')
         if tags is not None:
+            # if tags are presented we have to get list if them instead of
+            # the last one
+            tags = self.data.getlist('tags')
             queryset = queryset.filter(tags__slug__in=tags).distinct()
 
         return queryset

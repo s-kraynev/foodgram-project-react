@@ -226,6 +226,34 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'name', 'cooking_time', 'image')
+        model = Recipe
+
+
+# fix delete
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = '__all__'
+        read_only_fields = ('id', 'recipe', 'user')
+
+    @staticmethod
+    def check_recipe_add_favorite(recipe):
+        if recipe:
+            raise serializers.ValidationError(
+                'Уже находится в избранных рецептах'
+            )
+
+    @staticmethod
+    def check_recipe_del_favorite(recipe):
+        if not recipe:
+            raise serializers.ValidationError(
+                'Рецепт не найден в избранных рецептах'
+            )
+
+
 class FollowSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
     author = UserSerializer(required=True)

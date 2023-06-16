@@ -3,7 +3,8 @@ from djoser.views import UserViewSet
 from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 
-from api.views import (
+from .views import (
+    FavoriteViewSet,
     TagsViewSet,
     RecipeViewSet,
     IngredientViewSet,
@@ -14,11 +15,8 @@ router = DefaultRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'tags', TagsViewSet, basename='tags')
 router.register(r'ingredients', IngredientViewSet, basename='ingredients')
-#router.register(
-#    r'subscriptions', SubscriptionViewSet, basename='subscriptions')
-#router.register(
-#    r'users/(?P<id>\d+)/subscribe', SubscriptionViewSet, basename='subscribe'
-#)
+router.register(r'recipes/(?P<id>\d+)', FavoriteViewSet, basename='favorite')
+
 
 user_patterns = [
     path('', UserViewSet.as_view({'post': 'create'}), name='create_user'),
@@ -29,15 +27,14 @@ user_patterns = [
     path('subscriptions/', SubscriptionViewSet.as_view({'get', 'list'}),
          name='get_subscriptions'),
     re_path('(?P<id>[^/.]+)/subscribe/$',
-         SubscriptionViewSet.as_view({'post', 'create'}),
-         name='subscribe'),
+            SubscriptionViewSet.as_view({'post', 'create'}),
+            name='subscribe'),
     re_path('(?P<id>[^/.]+)/subscribe/$',
-         SubscriptionViewSet.as_view({'delete', 'destroy'}),
-         name='unsubscribe'),
+            SubscriptionViewSet.as_view({'delete', 'destroy'}),
+            name='unsubscribe'),
     re_path('(?P<id>[^/.]+)/$', UserViewSet.as_view({'get': 'retrieve'}),
             name='get_user'),
 ]
-
 
 urlpatterns = [
     path('', include(router.urls)),
