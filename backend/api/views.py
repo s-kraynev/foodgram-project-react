@@ -16,6 +16,7 @@ from .mixins import (
     DenyPutViewSet,
     DenyPutPatchViewSet,
 )
+from .pagination import CustomPagination
 from .permissions import (
     IsAdmin,
     IsAdminAuthorOrReadOnly,
@@ -45,6 +46,7 @@ class RecipeViewSet(DenyPutViewSet):
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = CustomPagination
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
