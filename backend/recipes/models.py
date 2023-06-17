@@ -128,7 +128,7 @@ class Follow(models.Model):
         verbose_name_plural = 'Подписчики'
 
     def __str__(self):
-        return f'{self.user} follower of {self.author}'
+        return f'{self.user} подписан на пользователя: {self.author}'
 
 
 class Favorite(models.Model):
@@ -148,7 +148,7 @@ class Favorite(models.Model):
         verbose_name_plural = 'Любимые рецепты'
 
     def __str__(self):
-        return f'{self.recipe} is favorite for {self.user}'
+        return f'{self.recipe} в списке избранных рецептов у {self.user}'
 
 
 class ShoppingCart(models.Model):
@@ -168,4 +168,4 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Покупки'
 
     def __str__(self):
-        return f'{self.user} buy {self.recipe}'
+        return f'{self.recipe} в списке покупок у {self.user}'

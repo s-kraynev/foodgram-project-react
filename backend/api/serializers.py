@@ -57,6 +57,7 @@ class UserSerializer(ValidateUserSerializer, serializers.ModelSerializer):
         )
 
 
+# NOTE: this class is used in settings.py
 class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+$',
@@ -254,12 +255,27 @@ class FavoriteSerializer(serializers.ModelSerializer):
             )
 
 
-class FollowSerializer(serializers.ModelSerializer):
-    user = UserSerializer(required=True)
-    author = UserSerializer(required=True)
+class SubscribeSerializer(UserSerializer):
+    recipes = ShortRecipeSerializer(many=True, source='recipe')
 
     class Meta:
-        model = Ingredient
+        model = User
         fields = (
-            'id', 'user', 'author',
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
         )
+        read_only_fields = (
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+        )
+

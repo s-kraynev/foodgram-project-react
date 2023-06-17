@@ -20,12 +20,12 @@ from .permissions import (
 )
 from .serializers import (
     FavoriteSerializer,
-    FollowSerializer,
     UserSerializer,
     IngredientSerializer,
     ReadRecipeSerializer,
     WriteRecipeSerializer,
     ShortRecipeSerializer,
+    SubscribeSerializer,
     TagSerializer,
 )
 from recipes.models import Ingredient, Tag, Recipe, Follow, Favorite
@@ -108,8 +108,48 @@ class IngredientViewSet(ListRetrieveViewSet):
 
 
 class SubscriptionViewSet(CreateDestroyListViewSet):
-    serializer_class = FollowSerializer
-    permission_classes = (permissions.AllowAny,)
     queryset = Follow.objects.all()
+    pagination_class = CustomPagination
 
+    @action(
+        methods=['POST'],
+        detail=False,
+    )
+    def subscribe(self, request, **kwargs):
+        user = request.user
+        serializer = FavoriteSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        recipe = self.get_recipe()
+        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
+        serializer.check_recipe_add_favorite(favorite_recipe)
+        Favorite.objects.create(user=user, recipe=recipe)
+        return Response(
+            ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK)
 
+    @subscribe.mapping.delete
+    def unsubscribe(self, request, **kwargs):
+        user = request.user
+        serializer = FavoriteSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        recipe = self.get_recipe()
+        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
+        serializer.check_recipe_del_favorite(favorite_recipe)
+        favorite_recipe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def list(self, request, *args, **kwargs):
+        authors = Follow.objects.filter(
+            user=request.user).values_list('author', flat=True)
+        queryset = User.objects.filter(id__in=authors).all()
+        page = self.paginate_queryset(queryset)
+        serializer = SubscribeSerializer(page, many=True)
+        # sorting number of recipes
+        recipes_limit = request.query_params.get('recipes_limit')
+        display_data = []
+        for author in serializer.data:
+            display_data.append(author.copy())
+            if recipes_limit is not None:
+                display_data[-1]['recipes'] = (
+                    display_data[-1]['recipes'][:int(recipes_limit)]
+                )
+        return self.get_paginated_response(display_data)
