@@ -1,7 +1,5 @@
 from rest_framework import status
 from rest_framework.mixins import (
-    CreateModelMixin,
-    DestroyModelMixin,
     ListModelMixin,
     RetrieveModelMixin,
 )
@@ -11,12 +9,6 @@ from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 class ListRetrieveViewSet(
     GenericViewSet, RetrieveModelMixin, ListModelMixin
-):
-    pass
-
-
-class CreateDestroyListViewSet(
-    GenericViewSet, CreateModelMixin, DestroyModelMixin, ListModelMixin
 ):
     pass
 

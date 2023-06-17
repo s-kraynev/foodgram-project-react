@@ -4,11 +4,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, GenericViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import (
-    CreateDestroyListViewSet,
     ListRetrieveViewSet,
     DenyPutViewSet,
 )
@@ -107,9 +106,12 @@ class IngredientViewSet(ListRetrieveViewSet):
     filterset_class = IngredientFilter
 
 
-class SubscriptionViewSet(CreateDestroyListViewSet):
+class SubscriptionViewSet(GenericViewSet):
     queryset = Follow.objects.all()
     pagination_class = CustomPagination
+
+    def get_author(self):
+        return get_object_or_404(User, id=self.kwargs.get('id'))
 
     @action(
         methods=['POST'],
@@ -117,24 +119,32 @@ class SubscriptionViewSet(CreateDestroyListViewSet):
     )
     def subscribe(self, request, **kwargs):
         user = request.user
-        serializer = FavoriteSerializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        recipe = self.get_recipe()
-        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
-        serializer.check_recipe_add_favorite(favorite_recipe)
-        Favorite.objects.create(user=user, recipe=recipe)
-        return Response(
-            ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK)
+        author = self.get_author()
+        serializer = SubscribeSerializer(
+            author, data=request.data, context={'request': request}
+        )
+        serializer.is_valid()
+        serializer.check_on_subscribe(user, author)
+        Follow.objects.create(user=user, author=author)
+        # sorting number of recipes
+        recipes_limit = request.query_params.get('recipes_limit')
+        display_data = []
+        iteration_data = serializer.data
+        if isinstance(iteration_data, dict):
+            iteration_data = [iteration_data]
+
+        for author in iteration_data:
+            display_data.append(author.copy())
+            if recipes_limit is not None:
+                display_data[-1]['recipes'] = (
+                    display_data[-1]['recipes'][:int(recipes_limit)]
+                )
+        return Response(display_data, status=status.HTTP_200_OK)
 
     @subscribe.mapping.delete
     def unsubscribe(self, request, **kwargs):
         user = request.user
-        serializer = FavoriteSerializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        recipe = self.get_recipe()
-        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
-        serializer.check_recipe_del_favorite(favorite_recipe)
-        favorite_recipe.delete()
+        import pdb; pdb.set_trace()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request, *args, **kwargs):

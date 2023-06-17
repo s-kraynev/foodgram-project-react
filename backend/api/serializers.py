@@ -256,7 +256,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(UserSerializer):
-    recipes = ShortRecipeSerializer(many=True, source='recipe')
+    recipes = ShortRecipeSerializer(many=True, source='recipe', required=False)
 
     class Meta:
         model = User
@@ -279,3 +279,20 @@ class SubscribeSerializer(UserSerializer):
             'recipes',
         )
 
+    @staticmethod
+    def check_on_subscribe(user, author):
+        if user == author:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя'
+            )
+        if Follow.objects.filter(user=user, author=author).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора'
+            )
+
+    @staticmethod
+    def check_on_unsubscribe(subscription):
+        if not subscription:
+            raise serializers.ValidationError(
+                'Ошибка отписки: Вы не подписаны на этого автора.'
+            )
