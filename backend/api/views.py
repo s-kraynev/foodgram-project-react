@@ -20,7 +20,6 @@ from .permissions import (
 )
 from .serializers import (
     FavoriteSerializer,
-    UserSerializer,
     IngredientSerializer,
     ReadRecipeSerializer,
     WriteRecipeSerializer,
@@ -28,7 +27,9 @@ from .serializers import (
     SubscribeSerializer,
     TagSerializer,
 )
-from recipes.models import Ingredient, Tag, Recipe, Follow, Favorite
+from recipes.models import (
+    Ingredient, Tag, Recipe, Follow, Favorite, ShoppingCart
+)
 
 User = get_user_model()
 
@@ -80,8 +81,7 @@ class FavoriteViewSet(ViewSet):
         serializer = FavoriteSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         recipe = self.get_recipe()
-        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
-        serializer.check_recipe_add_favorite(favorite_recipe)
+        serializer.check_recipe_add_favorite(user, recipe)
         Favorite.objects.create(user=user, recipe=recipe)
         return Response(
             ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK)
@@ -92,9 +92,8 @@ class FavoriteViewSet(ViewSet):
         serializer = FavoriteSerializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         recipe = self.get_recipe()
-        favorite_recipe = Favorite.objects.filter(user=user, recipe=recipe)
-        serializer.check_recipe_del_favorite(favorite_recipe)
-        favorite_recipe.delete()
+        serializer.check_recipe_del_favorite(user, recipe)
+        Favorite.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -152,9 +151,8 @@ class SubscribeViewSet(ViewSet):
             author, data=request.data, context={'request': request}
         )
         serializer.is_valid()
-        subscription = Follow.objects.get(user=user, author=author)
-        serializer.check_on_unsubscribe(subscription)
-        subscription.delete()
+        serializer.check_on_unsubscribe(user, author)
+        Follow.objects.get(user=user, author=author).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -179,3 +177,34 @@ class SubscriptionsViewSet(ListViewSet):
                     display_data[-1]['recipes'][:int(recipes_limit)]
                 )
         return self.get_paginated_response(display_data)
+
+
+class ShoppingCartViewSet(ViewSet):
+    queryset = ShoppingCart.objects.all()
+
+    def get_recipe(self):
+        return get_object_or_404(Recipe, id=self.kwargs.get('id'))
+
+    @action(
+        methods=['POST'],
+        detail=False,
+        url_path='shopping_cart',
+    )
+    def add_to_shopping_cart(self, request, **kwargs):
+        user = request.user
+        recipe = self.get_recipe()
+        serializer = ShortRecipeSerializer(recipe, data=request.data)
+        serializer.is_valid()
+        serializer.check_on_add_to_shopping_cart(user, recipe)
+        ShoppingCart.objects.create(user=user, recipe=recipe)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @add_to_shopping_cart.mapping.delete
+    def remove_from_shopping_cart(self, request, **kwargs):
+        user = request.user
+        recipe = self.get_recipe()
+        serializer = ShortRecipeSerializer(recipe, data=request.data)
+        serializer.is_valid()
+        serializer.check_on_remove_from_shopping_cart(user, recipe)
+        ShoppingCart.objects.get(user=user, recipe=recipe).delete()
+        return Response(serializer.data, status=status.HTTP_200_OK)

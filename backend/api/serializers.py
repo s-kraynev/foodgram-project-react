@@ -232,6 +232,19 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'cooking_time', 'image')
         model = Recipe
 
+    @staticmethod
+    def check_on_add_to_shopping_cart(user, recipe):
+        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                'Рецепт уже добавлен в корзину покупок'
+            )
+    @staticmethod
+    def check_on_remove_from_shopping_cart(user, recipe):
+        if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError(
+                'Рецепта нет в корзине покупок'
+            )
+
 
 # fix delete
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -241,15 +254,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'recipe', 'user')
 
     @staticmethod
-    def check_recipe_add_favorite(recipe):
-        if recipe:
+    def check_recipe_add_favorite(user, recipe):
+        if Favorite.objects.filter(user=user, recipe=recipe).exists():
             raise serializers.ValidationError(
                 'Уже находится в избранных рецептах'
             )
 
     @staticmethod
-    def check_recipe_del_favorite(recipe):
-        if not recipe:
+    def check_recipe_del_favorite(user, recipe):
+        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
             raise serializers.ValidationError(
                 'Рецепт не найден в избранных рецептах'
             )
@@ -291,8 +304,8 @@ class SubscribeSerializer(UserSerializer):
             )
 
     @staticmethod
-    def check_on_unsubscribe(subscription):
-        if not subscription:
+    def check_on_unsubscribe(user, author):
+        if not Follow.objects.filter(user=user, author=author).exists():
             raise serializers.ValidationError(
                 'Ошибка отписки: Вы не подписаны на этого автора.'
             )
