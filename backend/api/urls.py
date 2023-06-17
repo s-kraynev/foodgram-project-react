@@ -4,6 +4,7 @@ from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    download_ingredients,
     FavoriteViewSet,
     TagsViewSet,
     RecipeViewSet,
@@ -36,6 +37,7 @@ user_patterns = [
 ]
 
 urlpatterns = [
+    path('recipes/download_shopping_cart/', download_ingredients),
     path('', include(router.urls)),
     path('users/', include(user_patterns)),
     path('auth/', include('djoser.urls.authtoken')),

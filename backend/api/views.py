@@ -1,6 +1,15 @@
+import io
+from reportlab.lib.pagesizes import A4
+from collections import defaultdict
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+
+from django.http import FileResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from reportlab.pdfgen import canvas
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
@@ -208,3 +217,32 @@ class ShoppingCartViewSet(ViewSet):
         serializer.check_on_remove_from_shopping_cart(user, recipe)
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def download_ingredients(request):
+    shopping_records = ShoppingCart.objects.filter(user=request.user)
+    ingredients_to_buy = defaultdict(int)
+    for shopping_record in shopping_records:
+        for ingredient in shopping_record.recipe.ingredients.all():
+            key = (
+                ingredient.ingredient.name,
+                ingredient.ingredient.measurement_unit.unit
+            )
+            ingredients_to_buy[key] += ingredient.amount
+    output_text = []
+    for key, amount in ingredients_to_buy.items():
+        output_text.append(f"{key[0]} ({key[1]}) - {amount}")
+
+    w, h = A4
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4, lang='UTF-8')
+    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+    p.setFont('FreeSans', 16)
+    text = p.beginText(50, h - 50)
+    text.textLines('\n'.join(40*output_text))
+    p.drawText(text)
+    p.save()
+    buffer.seek(0)
+    return FileResponse(
+        buffer, as_attachment=True, filename="Список_покупок.pdf")
