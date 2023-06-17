@@ -8,6 +8,7 @@ from rest_framework.viewsets import ViewSet, GenericViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import (
+    ListViewSet,
     ListRetrieveViewSet,
     DenyPutViewSet,
 )
@@ -106,9 +107,8 @@ class IngredientViewSet(ListRetrieveViewSet):
     filterset_class = IngredientFilter
 
 
-class SubscriptionViewSet(GenericViewSet):
+class SubscribeViewSet(ViewSet):
     queryset = Follow.objects.all()
-    pagination_class = CustomPagination
 
     def get_author(self):
         return get_object_or_404(User, id=self.kwargs.get('id'))
@@ -116,10 +116,12 @@ class SubscriptionViewSet(GenericViewSet):
     @action(
         methods=['POST'],
         detail=False,
+        url_path='subscribe',
     )
     def subscribe(self, request, **kwargs):
         user = request.user
         author = self.get_author()
+        # pass context for correct work is_subscribed in User serializator
         serializer = SubscribeSerializer(
             author, data=request.data, context={'request': request}
         )
@@ -144,8 +146,21 @@ class SubscriptionViewSet(GenericViewSet):
     @subscribe.mapping.delete
     def unsubscribe(self, request, **kwargs):
         user = request.user
-        import pdb; pdb.set_trace()
+        author = self.get_author()
+        # pass context for correct work is_subscribed in User serializator
+        serializer = SubscribeSerializer(
+            author, data=request.data, context={'request': request}
+        )
+        serializer.is_valid()
+        subscription = Follow.objects.get(user=user, author=author)
+        serializer.check_on_unsubscribe(subscription)
+        subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SubscriptionsViewSet(ListViewSet):
+    queryset = Follow.objects.all()
+    pagination_class = CustomPagination
 
     def list(self, request, *args, **kwargs):
         authors = Follow.objects.filter(
