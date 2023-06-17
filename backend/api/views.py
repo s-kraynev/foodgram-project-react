@@ -142,7 +142,8 @@ class SubscriptionViewSet(CreateDestroyListViewSet):
             user=request.user).values_list('author', flat=True)
         queryset = User.objects.filter(id__in=authors).all()
         page = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(page, many=True)
+        serializer = SubscribeSerializer(
+            page, many=True, context={'request': request})
         # sorting number of recipes
         recipes_limit = request.query_params.get('recipes_limit')
         display_data = []
