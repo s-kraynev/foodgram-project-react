@@ -6,5 +6,5 @@ from .models import User
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name')
-    list_filter = ('first_name', 'email')
+    list_display = ("username", "email", "first_name", "last_name")
+    list_filter = ("first_name", "email")
