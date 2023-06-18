@@ -26,7 +26,12 @@ from .serializers import (
     TagSerializer,
 )
 from recipes.models import (
-    Ingredient, Tag, Recipe, Follow, Favorite, ShoppingCart
+    Ingredient,
+    Tag,
+    Recipe,
+    Follow,
+    Favorite,
+    ShoppingCart,
 )
 from .utils import generate_pdf_file
 
@@ -42,7 +47,10 @@ class TagsViewSet(ListRetrieveViewSet):
 
 class RecipeViewSet(DenyPutViewSet):
     queryset = Recipe.objects.all()
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter,)
+    filter_backends = (
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    )
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
     ordering = ('-pub_date',)
@@ -83,7 +91,8 @@ class FavoriteViewSet(ViewSet):
         serializer.check_recipe_add_favorite(user, recipe)
         Favorite.objects.create(user=user, recipe=recipe)
         return Response(
-            ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK)
+            ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK
+        )
 
     @makes_favorite.mapping.delete
     def delete_favorite(self, request, **kwargs):
@@ -136,9 +145,9 @@ class SubscribeViewSet(ViewSet):
         for author in iteration_data:
             display_data.append(author.copy())
             if recipes_limit is not None:
-                display_data[-1]['recipes'] = (
-                    display_data[-1]['recipes'][:int(recipes_limit)]
-                )
+                display_data[-1]['recipes'] = display_data[-1]['recipes'][
+                    : int(recipes_limit)
+                ]
         return Response(display_data, status=status.HTTP_200_OK)
 
     @subscribe.mapping.delete
@@ -160,21 +169,23 @@ class SubscriptionsViewSet(ListViewSet):
     pagination_class = CustomPagination
 
     def list(self, request, *args, **kwargs):
-        authors = Follow.objects.filter(
-            user=request.user).values_list('author', flat=True)
+        authors = Follow.objects.filter(user=request.user).values_list(
+            'author', flat=True
+        )
         queryset = User.objects.filter(id__in=authors).all()
         page = self.paginate_queryset(queryset)
         serializer = SubscribeSerializer(
-            page, many=True, context={'request': request})
+            page, many=True, context={'request': request}
+        )
         # sorting number of recipes
         recipes_limit = request.query_params.get('recipes_limit')
         display_data = []
         for author in serializer.data:
             display_data.append(author.copy())
             if recipes_limit is not None:
-                display_data[-1]['recipes'] = (
-                    display_data[-1]['recipes'][:int(recipes_limit)]
-                )
+                display_data[-1]['recipes'] = display_data[-1]['recipes'][
+                    : int(recipes_limit)
+                ]
         return self.get_paginated_response(display_data)
 
 
@@ -218,7 +229,7 @@ def download_ingredients(request):
         for ingredient in shopping_record.recipe.ingredients.all():
             key = (
                 ingredient.ingredient.name,
-                ingredient.ingredient.measurement_unit.unit
+                ingredient.ingredient.measurement_unit.unit,
             )
             ingredients_to_buy[key] += ingredient.amount
     # prepare final list of ingredients
@@ -227,4 +238,5 @@ def download_ingredients(request):
         output_text.append(f'{key[0]} ({key[1]}) - {amount}')
     result = generate_pdf_file(output_text)
     return FileResponse(
-        result, as_attachment=True, filename='Список_покупок.pdf')
+        result, as_attachment=True, filename='Список_покупок.pdf'
+    )

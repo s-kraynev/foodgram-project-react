@@ -7,8 +7,13 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from recipes.models import (
-    Favorite, Follow, Ingredient, Recipe,
-    ShoppingCart, Tag, UsedIngredient,
+    Favorite,
+    Follow,
+    Ingredient,
+    Recipe,
+    ShoppingCart,
+    Tag,
+    UsedIngredient,
 )
 
 User = get_user_model()
@@ -85,9 +90,7 @@ class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'password'
-        )
+        fields = ('username', 'email', 'first_name', 'last_name', 'password')
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
@@ -97,9 +100,7 @@ class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = (
-            'id', 'name', 'color', 'slug'
-        )
+        fields = ('id', 'name', 'color', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -108,7 +109,9 @@ class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = (
-            'id', 'name', 'measurement_unit',
+            'id',
+            'name',
+            'measurement_unit',
         )
 
 
@@ -120,7 +123,10 @@ class UsedIngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsedIngredient
         fields = (
-            'id', 'name', 'measurement_unit', 'amount',
+            'id',
+            'name',
+            'measurement_unit',
+            'amount',
         )
 
     def get_name(self, obj):
@@ -133,8 +139,8 @@ class UsedIngredientSerializer(serializers.ModelSerializer):
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
+            format_, imgstr = data.split(';base64,')
+            ext = format_.split('/')[-1]
 
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
@@ -152,9 +158,16 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'ingredients',
-            'name', 'image', 'text', 'cooking_time',
-            'author', 'is_favorited', 'is_in_shopping_cart',
+            'id',
+            'tags',
+            'ingredients',
+            'name',
+            'image',
+            'text',
+            'cooking_time',
+            'author',
+            'is_favorited',
+            'is_in_shopping_cart',
         )
         read_only_fields = ('pub_date',)
 
@@ -167,8 +180,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
 
 class CreateUsedIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        required=True,
-        queryset=Ingredient.objects.all()
+        required=True, queryset=Ingredient.objects.all()
     )
 
     class Meta:
@@ -181,16 +193,18 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
     tags = serializers.ListSerializer(
         required=True,
         child=serializers.PrimaryKeyRelatedField(
-            required=True,
-            queryset=Tag.objects.all()
-        )
+            required=True, queryset=Tag.objects.all()
+        ),
     )
     ingredients = CreateUsedIngredientSerializer(many=True, required=True)
 
     class Meta:
         model = Recipe
         fields = '__all__'
-        read_only_fields = ('author', 'pub_date', )
+        read_only_fields = (
+            'author',
+            'pub_date',
+        )
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
@@ -244,9 +258,7 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     @staticmethod
     def check_on_remove_from_shopping_cart(user, recipe):
         if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError(
-                'Рецепта нет в корзине покупок'
-            )
+            raise serializers.ValidationError('Рецепта нет в корзине покупок')
 
 
 # fix delete

@@ -7,15 +7,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 
-class ListViewSet(
-    GenericViewSet, ListModelMixin
-):
+class ListViewSet(GenericViewSet, ListModelMixin):
     pass
 
 
-class ListRetrieveViewSet(
-    GenericViewSet, RetrieveModelMixin, ListModelMixin
-):
+class ListRetrieveViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin):
     pass
 
 
