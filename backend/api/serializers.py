@@ -156,7 +156,6 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
             'id', 'tags', 'ingredients',
             'name', 'image', 'text', 'cooking_time',
             'author', 'is_favorited', 'is_in_shopping_cart',
-            'pub_date',
         )
         read_only_fields = ('pub_date',)
 

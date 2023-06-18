@@ -47,11 +47,11 @@ class TagsViewSet(ListRetrieveViewSet):
 
 
 class RecipeViewSet(DenyPutViewSet):
-    # TODO: add order sorting by pub date
     queryset = Recipe.objects.all()
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter,)
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
+    ordering = ('-pub_date',)
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
@@ -215,9 +215,7 @@ class ShoppingCartViewSet(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # TODO:
-#- add pub datetime
-#- add pub date and more readable data to loadcsv
-#- add ordering on recipe and followers pages
+#- fix permissions
 #- fix pep8
 
 
