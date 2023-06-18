@@ -12,7 +12,6 @@ from recipes.models import (
     Recipe,
     Tag,
     UsedIngredient,
-    User,
 )
 
 User = get_user_model()
