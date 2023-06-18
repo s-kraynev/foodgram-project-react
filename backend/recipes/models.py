@@ -71,16 +71,12 @@ class UsedIngredient(models.Model):
 
 
 class Recipe(models.Model):
-
     author = models.ForeignKey(
         User,
         related_name='recipe',
         on_delete=models.CASCADE,
     )
-    name = models.CharField(
-        "Название",
-        max_length=200
-    )
+    name = models.CharField("Название", max_length=200)
     image = models.ImageField(
         "Картинка",
         upload_to='images/',
@@ -114,14 +110,10 @@ class Recipe(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower'
+        User, on_delete=models.CASCADE, related_name='follower'
     )
     author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following'
+        User, on_delete=models.CASCADE, related_name='following'
     )
 
     class Meta:
@@ -135,14 +127,10 @@ class Follow(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='favorite_user'
+        User, on_delete=models.CASCADE, related_name='favorite_user'
     )
     recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='favorite_recipe'
+        Recipe, on_delete=models.CASCADE, related_name='favorite_recipe'
     )
 
     class Meta:
@@ -155,14 +143,10 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='shopping_user'
+        User, on_delete=models.CASCADE, related_name='shopping_user'
     )
     recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='shopping_recipe'
+        Recipe, on_delete=models.CASCADE, related_name='shopping_recipe'
     )
 
     class Meta:

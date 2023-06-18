@@ -5,8 +5,14 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 from recipes.models import (
-    Favorite, Follow, Ingredient, MeasurementUnit, Recipe, Tag, User,
-    UsedIngredient
+    Favorite,
+    Follow,
+    Ingredient,
+    MeasurementUnit,
+    Recipe,
+    Tag,
+    User,
+    UsedIngredient,
 )
 
 User = get_user_model()
@@ -110,7 +116,7 @@ FILE_TO_METHOD_MAP = [
     ('users', get_users),
     ('follows', get_follows),
     ('recipes', get_recipes),
-    ('favorites', get_favorites)
+    ('favorites', get_favorites),
 ]
 
 
