@@ -1,0 +1,7 @@
+[tool.black]
+line-length = 79
+target-version = ['py39', 'py310']
+# exclude files in tests directory
+extend-exclude = '''.*tests.*'''
+skip-string-normalization = true
+
