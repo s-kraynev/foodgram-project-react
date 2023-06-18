@@ -224,7 +224,7 @@ def download_ingredients(request):
     # prepare final list of ingredients
     output_text = []
     for key, amount in ingredients_to_buy.items():
-        output_text.append(f"{key[0]} ({key[1]}) - {amount}")
+        output_text.append(f'{key[0]} ({key[1]}) - {amount}')
     result = generate_pdf_file(output_text)
     return FileResponse(
-        result, as_attachment=True, filename="Список_покупок.pdf")
+        result, as_attachment=True, filename='Список_покупок.pdf')

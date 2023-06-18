@@ -80,7 +80,7 @@ class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=settings.MID_SMALL_INT_LENGTH,
         required=True,
-        style={"input_type": "password"},
+        style={'input_type': 'password'},
     )
 
     class Meta:

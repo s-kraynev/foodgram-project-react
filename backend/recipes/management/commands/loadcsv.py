@@ -130,7 +130,7 @@ def load_data_from_csv(f_name, load_func, inst, csv_dir, errors):
                 f'{csv_dir}. Загрузка данных из него не выполнена.'
             )
         )
-    with open(f_path, newline='', encoding="utf-8") as csvfile:
+    with open(f_path, newline='', encoding='utf-8') as csvfile:
         try:
             data = csv.DictReader(csvfile, delimiter=',')
             load_func(data)
