@@ -215,9 +215,6 @@ class ShoppingCartViewSet(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # TODO:
-#- fix readme
-#- add note about some issues to readme
-#- fix splitting on several pages on pdf
 #- add ordering on recipe and followers pages
 #- add pub datetime
 #- add pub date and more readable data to loadcsv
