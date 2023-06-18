@@ -68,6 +68,7 @@ os.getenv('SECRET_KEY')
 
 И не забываем создать файл .env на уровне виртуального окружения
 И прописать в нем: SECRET_KEY=<ваш код>
+
 ## Запуск тестов
 Линтеры:
 
@@ -104,8 +105,28 @@ GET /api/users/subscriptions - Получение списка авторов н
 GET /api/users/ - Получение списка всех пользователей
 ```
 
-### Сборка проекта
+### Локальный запуск проекта
+## Без контейнеров с sqlite db
 
+Патчим proxy в файле frontend/package.json
+```
+"proxy": "http://127.0.0.1:8000/"
+```
+
+Собираем UI
+```
+cd frontend
+npm -i
+npm run start
+```
+
+Меняем posgresql на sqlite в backend/foodgram/settings.py
+Запускаем проект по инструкции выше в файле командой
+```
+python manage.py runserver
+```
+
+## В контейнере
 Для сборки проекта необходимо установить docker согласно 
 [инструкции](https://docs.docker.com/engine/install/ubuntu/).
 
@@ -115,11 +136,26 @@ sudo apt update
 sudo apt install docker-compose
 ```
 
-Запуск frontend локально:
+Запуск локально в контейнере 
+(для запуска docker могут потребоваться права root пользователя):
 ```
 cd infra
 docker-compose up
+# настройка БД
+docker compose exec backend python manage.py migrate
+docker compose exec backend python manage.py loadcsv /load_data
+docker compose exec backend python manage.py createsuperuser --email admin@ya.ru --username admin
+# настройка статики для админки (volume смонтирован отдельно чтобы не перетирать статику frontend-a)
+docker compose exec backend python manage.py collectstatic
+docker compose exec backend  cp -r /app/collected_static/. /backend_static/
+docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 ```
+
+### Важные заметки
+- В папке backend находится файл - FreeSans.ttf
+  Он необходим в контейнере для корректной работы библиотеки по выгрузке PDF списка покупок.
+  Отсутвие файла приводит к ошибке
+- Volume c data монтируется в /load_data для запуска миграций тестовых значений
 
 ### Авторы
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)

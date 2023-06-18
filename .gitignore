@@ -135,3 +135,4 @@ dmypy.json
 backend/recipes/migrations
 backend/users/migrations
 backend/images
+backend/media
