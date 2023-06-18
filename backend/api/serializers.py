@@ -1,5 +1,4 @@
 import base64
-import datetime as dt
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -8,7 +7,7 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from recipes.models import (
-    Favorite, Follow, Ingredient, MeasurementUnit, Recipe,
+    Favorite, Follow, Ingredient, Recipe,
     ShoppingCart, Tag, UsedIngredient,
 )
 
@@ -241,6 +240,7 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Рецепт уже добавлен в корзину покупок'
             )
+
     @staticmethod
     def check_on_remove_from_shopping_cart(user, recipe):
         if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():

@@ -27,8 +27,8 @@ router.register(
     r'users/(?P<id>[^/.]+)', SubscribeViewSet, basename='subscribe')
 
 user_patterns = [
-    path('', UserViewSet.as_view({'post': 'create'}), name='create_user'),
     path('', UserViewSet.as_view({'get': 'list'}), name='list_users'),
+    path('', UserViewSet.as_view({'post': 'create'}), name='create_user'),
     path('me/', UserViewSet.as_view({'get': 'me'}), name='me'),
     path('set_password/', UserViewSet.as_view({'post': 'set_password'}),
          name='set_password'),

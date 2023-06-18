@@ -1,14 +1,13 @@
 from collections import defaultdict
 
-
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, status
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet, GenericViewSet
+from rest_framework.viewsets import ViewSet
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import (
@@ -17,11 +16,6 @@ from .mixins import (
     DenyPutViewSet,
 )
 from .pagination import CustomPagination
-from .permissions import (
-    IsAdmin,
-    IsAdminAuthorOrReadOnly,
-    IsAdminOrReadOnly,
-)
 from .serializers import (
     FavoriteSerializer,
     IngredientSerializer,
@@ -213,11 +207,6 @@ class ShoppingCartViewSet(ViewSet):
         serializer.check_on_remove_from_shopping_cart(user, recipe)
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-# TODO:
-#- fix get users
-#- fix permissions
-#- fix pep8
 
 
 @api_view(['GET'])
