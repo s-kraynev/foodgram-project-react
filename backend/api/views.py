@@ -1,15 +1,10 @@
-import io
-from reportlab.lib.pagesizes import A4
 from collections import defaultdict
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 
 
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.pdfgen import canvas
 from rest_framework import filters, permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
@@ -39,6 +34,7 @@ from .serializers import (
 from recipes.models import (
     Ingredient, Tag, Recipe, Follow, Favorite, ShoppingCart
 )
+from .utils import generate_pdf_file
 
 User = get_user_model()
 
@@ -218,11 +214,22 @@ class ShoppingCartViewSet(ViewSet):
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+# TODO:
+#- fix readme
+#- add note about some issues to readme
+#- fix splitting on several pages on pdf
+#- add ordering on recipe and followers pages
+#- add pub datetime
+#- add pub date and more readable data to loadcsv
+#- fix pep8
+
+
 
 @api_view(['GET'])
 def download_ingredients(request):
     shopping_records = ShoppingCart.objects.filter(user=request.user)
     ingredients_to_buy = defaultdict(int)
+    # group ingredients by name
     for shopping_record in shopping_records:
         for ingredient in shopping_record.recipe.ingredients.all():
             key = (
@@ -230,19 +237,10 @@ def download_ingredients(request):
                 ingredient.ingredient.measurement_unit.unit
             )
             ingredients_to_buy[key] += ingredient.amount
+    # prepare final list of ingredients
     output_text = []
     for key, amount in ingredients_to_buy.items():
         output_text.append(f"{key[0]} ({key[1]}) - {amount}")
-
-    w, h = A4
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4, lang='UTF-8')
-    pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
-    p.setFont('FreeSans', 16)
-    text = p.beginText(50, h - 50)
-    text.textLines('\n'.join(40*output_text))
-    p.drawText(text)
-    p.save()
-    buffer.seek(0)
+    result = generate_pdf_file(output_text)
     return FileResponse(
-        buffer, as_attachment=True, filename="Список_покупок.pdf")
+        result, as_attachment=True, filename="Список_покупок.pdf")
