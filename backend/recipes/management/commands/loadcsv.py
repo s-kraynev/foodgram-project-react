@@ -11,8 +11,8 @@ from recipes.models import (
     MeasurementUnit,
     Recipe,
     Tag,
-    User,
     UsedIngredient,
+    User,
 )
 
 User = get_user_model()
