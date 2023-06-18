@@ -215,9 +215,9 @@ class ShoppingCartViewSet(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # TODO:
-#- add ordering on recipe and followers pages
 #- add pub datetime
 #- add pub date and more readable data to loadcsv
+#- add ordering on recipe and followers pages
 #- fix pep8
 
 

@@ -27,6 +27,7 @@
 Cоздать и активировать виртуальное окружение:
 
 ```
+cd backend/
 python3 -m venv venv
 source venv/bin/activate
 ```
@@ -48,6 +49,13 @@ python manage.py migrate
 
 ```
 python manage.py loadcsv ../data
+```
+(для тестовых пользователь пароль доступа: -)
+
+Создание суперпользователя для доступа к админке
+
+```
+python manage.py createsuperuser --email admin@ya.ru --username admin
 ```
 
 Секретный ключ

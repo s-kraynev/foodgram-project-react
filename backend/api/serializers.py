@@ -156,7 +156,9 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
             'id', 'tags', 'ingredients',
             'name', 'image', 'text', 'cooking_time',
             'author', 'is_favorited', 'is_in_shopping_cart',
+            'pub_date',
         )
+        read_only_fields = ('pub_date',)
 
     def get_is_favorited(self, obj):
         return Recipe.is_favorited(obj, self.context['request'].user.id)
@@ -190,7 +192,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
-        read_only_fields = ('author',)
+        read_only_fields = ('author', 'pub_date', )
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
