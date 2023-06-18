@@ -107,6 +107,9 @@ class Recipe(models.Model):
     def is_in_shopping_cart(recipe, user):
         return ShoppingCart.objects.filter(recipe=recipe, user=user).exists()
 
+    def count_favorites(self):
+        return Favorite.objects.filter(recipe=self).count()
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
