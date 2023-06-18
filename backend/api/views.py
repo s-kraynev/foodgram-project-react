@@ -215,9 +215,9 @@ class ShoppingCartViewSet(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # TODO:
+#- fix get users
 #- fix permissions
 #- fix pep8
-
 
 
 @api_view(['GET'])
