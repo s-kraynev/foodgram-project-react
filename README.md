@@ -159,3 +159,9 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 
 ### Автор backend части и деплоя
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
+
+TODO:
+- пароль от админки, url, адрес в ридми
+- разделение на приложения
+- разделение api на приложения
+

@@ -20,7 +20,6 @@ from recipes.models import (
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import DenyPutViewSet, ListRetrieveViewSet, ListViewSet
-from .pagination import CustomPagination
 from .serializers import (
     FavoriteSerializer,
     IngredientSerializer,
@@ -49,7 +48,6 @@ class RecipeViewSet(DenyPutViewSet):
         filters.OrderingFilter,
     )
     filterset_class = RecipeFilter
-    pagination_class = CustomPagination
     ordering = ('-pub_date',)
 
     def get_permissions(self):
@@ -163,7 +161,6 @@ class SubscribeViewSet(ViewSet):
 
 class SubscriptionsViewSet(ListViewSet):
     queryset = Follow.objects.all()
-    pagination_class = CustomPagination
 
     def list(self, request, *args, **kwargs):
         authors = Follow.objects.filter(user=request.user).values_list(
