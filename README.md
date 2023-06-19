@@ -157,5 +157,5 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
   Отсутвие файла приводит к ошибке
 - Volume c data монтируется в /load_data для запуска миграций тестовых значений
 
-### Авторы
+### Автор backend части и деплоя
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
