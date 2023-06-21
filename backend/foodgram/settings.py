@@ -159,6 +159,12 @@ MID_INT_LENGTH = 200
 
 MID_SMALL_INT_LENGTH = 150
 
+# NOTE: I thought about removing extra endpoints, but did not find the best
+# olution. I met the question:
+# https://stackoverflow.com/questions/54846372/djoser-disable-unused-endpoints
+# And it says, that it's not possible.
+# So I decided to establish only necessary urls instead of full viewset
+# ALso I could set permissions onlyAdmin for unused endpoints.
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {

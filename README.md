@@ -1,3 +1,9 @@
+## Сервер с приложением:
+url: https://skr-foodgram.ddns.net
+админка:
+- login: admin
+- password: (фамилия латиницей)
+
 ## Проект Foodgram
 
 Пользователи Foodgram могут публиковать рецепты, подписываться на публикации
@@ -161,7 +167,5 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
 
 TODO:
-- пароль от админки, url, адрес в ридми
 - разделение на приложения
 - разделение api на приложения
-
