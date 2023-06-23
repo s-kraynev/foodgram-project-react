@@ -28,10 +28,11 @@ router.register(
     r'users/(?P<id>[^/.]+)', SubscribeViewSet, basename='subscribe'
 )
 
-# TODO: fix list and create blocks each other and only one could work
 user_patterns = [
-    path('', UserViewSet.as_view({'get': 'list'}), name='list_users'),
-    path('', UserViewSet.as_view({'post': 'create'}), name='create_user'),
+    path('', UserViewSet.as_view({
+        'get': 'list',
+        'post': 'create',
+    }), name='create_list_users'),
     path('me/', UserViewSet.as_view({'get': 'me'}), name='me'),
     path(
         'set_password/',
