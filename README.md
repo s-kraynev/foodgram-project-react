@@ -47,7 +47,7 @@ pip install -r requirements.txt
 Выполнить миграции:
 
 ```
-python manage.py makemigrations users recipes
+python manage.py makemigrations users ingredients recipes tags
 python manage.py migrate
 
 ```
@@ -167,5 +167,6 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
 
 TODO:
-- разделение на приложения
 - разделение api на приложения
+- remove debug option
+- set correct allowed hosts

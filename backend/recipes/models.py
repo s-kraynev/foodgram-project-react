@@ -2,37 +2,10 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from ingredients.models import Ingredient
 from tags.models import Tag
 
 User = get_user_model()
-
-
-class MeasurementUnit(models.Model):
-    unit = models.CharField('Единица измерения', max_length=200)
-
-    class Meta:
-        verbose_name = 'Единица измерения'
-        verbose_name_plural = 'Единицы измерения'
-
-    def __str__(self):
-        return self.unit
-
-
-class Ingredient(models.Model):
-    measurement_unit = models.ForeignKey(
-        MeasurementUnit,
-        related_name='ingredient',
-        on_delete=models.CASCADE,
-        unique=False,
-    )
-    name = models.CharField('Название', max_length=200)
-
-    class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
-
-    def __str__(self):
-        return self.name
 
 
 class UsedIngredient(models.Model):

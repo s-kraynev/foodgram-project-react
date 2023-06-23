@@ -9,12 +9,8 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-)
+from ingredients.models import Ingredient
+from recipes.models import Favorite, Recipe, ShoppingCart
 from tags.models import Tag
 from users.models import Follow
 

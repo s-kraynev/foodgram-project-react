@@ -1,12 +1,6 @@
 from django.contrib import admin
 
-from .models import (
-    Favorite,
-    Ingredient,
-    MeasurementUnit,
-    Recipe,
-    ShoppingCart,
-)
+from .models import Favorite, Recipe, ShoppingCart
 
 
 @admin.register(Recipe)
@@ -24,17 +18,6 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.count_favorites()
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'measurement_unit',
-    )
-    search_fields = ('name',)
-    list_filter = ('name',)
-    empty_value_display = '-пусто-'
-
-
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
     pass
@@ -42,9 +25,4 @@ class ShoppingCartAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(MeasurementUnit)
-class MeasureUnitAdmin(admin.ModelAdmin):
     pass

@@ -6,13 +6,8 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    UsedIngredient,
-)
+from ingredients.models import Ingredient
+from recipes.models import Favorite, Recipe, ShoppingCart, UsedIngredient
 from tags.models import Tag
 from users.models import Follow
 
