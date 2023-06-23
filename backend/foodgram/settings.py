@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_NAME', 'django.db.backends.postgresql'),
+        'ENGINE': os.getenv('ENGINE', 'django.db.backends.postgresql'),
         'NAME': os.getenv('POSTGRES_DB', 'django'),
         'USER': os.getenv('POSTGRES_USER', 'django'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
@@ -145,7 +145,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_PAGINATION_CLASS': ('api.pagination.CustomPagination'),
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
     'PAGE_SIZE': 6,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
@@ -162,7 +162,7 @@ MID_INT_LENGTH = 200
 MID_SMALL_INT_LENGTH = 150
 
 # NOTE: I thought about removing extra endpoints, but did not find the best
-# olution. I met the question:
+# solution. I met the question:
 # https://stackoverflow.com/questions/54846372/djoser-disable-unused-endpoints
 # And it says, that it's not possible.
 # So I decided to establish only necessary urls instead of full viewset
@@ -173,7 +173,9 @@ DJOSER = {
         'user_create': 'api.serializers.RegisterSerializer',
         'user': 'api.serializers.UserSerializer',
     },
+    # 'HIDE_USERS': False,
     'PERMISSIONS': {
+        'user_create': ['rest_framework.permissions.AllowAny'],
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.AllowAny'],
     },
