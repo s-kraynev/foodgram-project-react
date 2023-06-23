@@ -132,9 +132,9 @@ dmypy.json
 .idea
 
 # migrations
-backend/recipes/migrations
-backend/tags/migrations
-backend/users/migrations
+# backend/recipes/migrations
+# backend/tags/migrations
+# backend/users/migrations
 # static files
 backend/images
 backend/media
