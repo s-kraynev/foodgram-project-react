@@ -16,5 +16,3 @@ class UserAdmin(UserAdmin):
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     pass
-
-

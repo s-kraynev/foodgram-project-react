@@ -170,3 +170,4 @@ TODO:
 - разделение api на приложения
 - remove debug option
 - set correct allowed hosts
+- create admin user

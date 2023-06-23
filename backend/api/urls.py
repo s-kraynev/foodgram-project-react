@@ -29,10 +29,16 @@ router.register(
 )
 
 user_patterns = [
-    path('', UserViewSet.as_view({
-        'get': 'list',
-        'post': 'create',
-    }), name='create_list_users'),
+    path(
+        '',
+        UserViewSet.as_view(
+            {
+                'get': 'list',
+                'post': 'create',
+            }
+        ),
+        name='create_list_users',
+    ),
     path('me/', UserViewSet.as_view({'get': 'me'}), name='me'),
     path(
         'set_password/',
