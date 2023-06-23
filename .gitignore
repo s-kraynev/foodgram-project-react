@@ -133,6 +133,8 @@ dmypy.json
 
 # migrations
 backend/recipes/migrations
+backend/tags/migrations
 backend/users/migrations
+# static files
 backend/images
 backend/media

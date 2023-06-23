@@ -10,9 +10,9 @@ from recipes.models import (
     Ingredient,
     MeasurementUnit,
     Recipe,
-    Tag,
     UsedIngredient,
 )
+from tags.models import Tag
 
 User = get_user_model()
 

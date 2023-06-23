@@ -15,8 +15,8 @@ from recipes.models import (
     Ingredient,
     Recipe,
     ShoppingCart,
-    Tag,
 )
+from tags.models import Tag
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import DenyPutViewSet, ListRetrieveViewSet, ListViewSet

@@ -7,7 +7,6 @@ from .models import (
     MeasurementUnit,
     Recipe,
     ShoppingCart,
-    Tag,
 )
 
 
@@ -24,17 +23,6 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def favorite_score(self, obj):
         return obj.count_favorites()
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'slug',
-    )
-    search_fields = ('name',)
-    list_filter = ('name',)
-    empty_value_display = '-пусто-'
 
 
 @admin.register(Ingredient)

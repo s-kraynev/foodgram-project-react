@@ -12,9 +12,9 @@ from recipes.models import (
     Ingredient,
     Recipe,
     ShoppingCart,
-    Tag,
     UsedIngredient,
 )
+from tags.models import Tag
 
 User = get_user_model()
 
