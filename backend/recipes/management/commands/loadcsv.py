@@ -6,13 +6,13 @@ from django.core.management.base import BaseCommand, CommandError
 
 from recipes.models import (
     Favorite,
-    Follow,
     Ingredient,
     MeasurementUnit,
     Recipe,
     UsedIngredient,
 )
 from tags.models import Tag
+from users.models import Follow
 
 User = get_user_model()
 

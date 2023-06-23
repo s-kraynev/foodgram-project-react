@@ -11,12 +11,12 @@ from rest_framework.viewsets import ViewSet
 
 from recipes.models import (
     Favorite,
-    Follow,
     Ingredient,
     Recipe,
     ShoppingCart,
 )
 from tags.models import Tag
+from users.models import Follow
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import DenyPutViewSet, ListRetrieveViewSet, ListViewSet

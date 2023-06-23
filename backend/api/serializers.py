@@ -8,13 +8,13 @@ from rest_framework import serializers
 
 from recipes.models import (
     Favorite,
-    Follow,
     Ingredient,
     Recipe,
     ShoppingCart,
     UsedIngredient,
 )
 from tags.models import Tag
+from users.models import Follow
 
 User = get_user_model()
 

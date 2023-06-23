@@ -89,23 +89,6 @@ class Recipe(models.Model):
         return Favorite.objects.filter(recipe=self).count()
 
 
-class Follow(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='follower'
-    )
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='following'
-    )
-
-    class Meta:
-        unique_together = ['user', 'author']
-        verbose_name = 'Подписчик'
-        verbose_name_plural = 'Подписчики'
-
-    def __str__(self):
-        return f'{self.user} подписан на пользователя: {self.author}'
-
-
 class Favorite(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='favorite_user'
