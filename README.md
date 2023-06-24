@@ -168,4 +168,5 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 
 TODO:
 - add inline logic to recipe admin model
+- add pictures for all data
 - create admin user on cloud server

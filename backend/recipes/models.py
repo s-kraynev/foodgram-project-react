@@ -31,12 +31,17 @@ class Recipe(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='images/',
-        null=True,
+        null=False,
         default=None,
     )
     text = models.TextField('Описание')
     tags = models.ManyToManyField(Tag)
-    cooking_time = models.IntegerField('Время готовки (минут)')
+    cooking_time = models.PositiveIntegerField('Время готовки (минут)')
+    # NOTE: I did not catch the idea of using "through" option.
+    # in one of previous sprints you said, that it's useless, because django
+    # creates help table itself. Do you mean, that I need to remove
+    # UsedIngredient and use the same form via "through" ?
+    # probbaly it will be the same as is... is not?
     ingredients = models.ManyToManyField(UsedIngredient)
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата публикации', db_index=True
@@ -45,6 +50,8 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        # NOTE: it's already sorted in right order - we show first the last
+        # added recipe
         ordering = ('pub_date',)
 
     def __str__(self):

@@ -35,6 +35,13 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
+    # NOTE: it was a shame to hear, that it was written by different people.
+    # I copied it from our group project and just leaft as it was, because
+    # it worked as I wanted. The another model (Favorite) was added later and
+    # just edited in different style during debug.
+    # please do not say something like that, because it really makes my spent
+    # time useless! I added all lines mysqlf to this project. You could read
+    # full git history, if you don't trust me.
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -49,9 +56,17 @@ class Follow(models.Model):
     )
 
     class Meta:
-        unique_together = ['user', 'author']
         verbose_name = 'Подписчик'
         verbose_name_plural = 'Подписчики'
+        constraints = (
+            models.UniqueConstraint(
+                fields=(
+                    'user',
+                    'author',
+                ),
+                name='unique subscriber',
+            ),
+        )
 
     def __str__(self):
         return f'{self.user} подписан на пользователя: {self.author}'
