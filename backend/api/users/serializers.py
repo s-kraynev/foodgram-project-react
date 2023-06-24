@@ -47,42 +47,6 @@ class UserSerializer(ValidateUserSerializer, serializers.ModelSerializer):
         )
 
 
-# NOTE: this class is used in settings.py
-class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
-    # NOTE: these fields are mentioned here, because we need to override some
-    # validations and explicitly show, that all fields are required
-    username = serializers.RegexField(
-        regex=r'^[\w.@+-]+$',
-        required=True,
-        max_length=settings.MID_SMALL_INT_LENGTH,
-    )
-    email = serializers.EmailField(
-        max_length=settings.BIG_INT_LENGTH,
-        required=True,
-    )
-    first_name = serializers.CharField(
-        required=True,
-        max_length=settings.MID_SMALL_INT_LENGTH,
-    )
-    last_name = serializers.CharField(
-        max_length=settings.MID_SMALL_INT_LENGTH,
-        required=True,
-    )
-    password = serializers.CharField(
-        max_length=settings.MID_SMALL_INT_LENGTH,
-        required=True,
-        style={'input_type': 'password'},
-    )
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password')
-
-    def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
-        return super(RegisterSerializer, self).create(validated_data)
-
-
 class SubscribeSerializer(UserSerializer):
     recipes = ShortRecipeSerializer(many=True, source='recipe', required=False)
 

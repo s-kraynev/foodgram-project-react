@@ -177,7 +177,6 @@ MID_SMALL_INT_LENGTH = 150
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user_create': 'api.users.serializers.RegisterSerializer',
         'user': 'api.users.serializers.UserSerializer',
     },
     'PERMISSIONS': {

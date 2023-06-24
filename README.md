@@ -61,7 +61,7 @@ python manage.py loadcsv ../data
 Создание суперпользователя для доступа к админке
 
 ```
-python manage.py createsuperuser --email admin@ya.ru --username admin
+python manage.py createsuperuser --email admin@ya.ru --username admin --first_name admin --last_name adminovich
 ```
 
 Секретный ключ
