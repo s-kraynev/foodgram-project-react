@@ -9,17 +9,17 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
+from api.common.filters import RecipeFilter
+from api.common.mixins import DenyPutViewSet
+from api.common.serializers import ShortRecipeSerializer
+from api.common.utils import generate_pdf_file
 from recipes.models import Favorite, Recipe, ShoppingCart
 
-from .filters import RecipeFilter
-from .mixins import DenyPutViewSet
 from .serializers import (
     FavoriteSerializer,
     ReadRecipeSerializer,
-    ShortRecipeSerializer,
     WriteRecipeSerializer,
 )
-from .utils import generate_pdf_file
 
 User = get_user_model()
 
