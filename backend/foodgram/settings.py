@@ -19,11 +19,9 @@ if not SECRET_KEY:
     sys.exit('Ошибка ключа')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# TODO: disable it on deploy
-DEBUG = True
+DEBUG = bool(os.getenv('DEBUG', False))
 
-# TODO fix on deploy
-ALLOWED_HOSTS = ['*', 'skr-foodgram.ddns.net']
+ALLOWED_HOSTS = [os.getenv('HOSTS', 'skr-foodgram.ddns.net')]
 
 
 # Application definition
