@@ -28,7 +28,7 @@ class UsedIngredientSerializer(serializers.ModelSerializer):
         return obj.ingredient.name
 
     def get_measurement_unit(self, obj):
-        return obj.ingredient.measurement_unit.unit
+        return obj.ingredient.measurement_unit
 
 
 class Base64ImageField(serializers.ImageField):

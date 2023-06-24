@@ -4,7 +4,7 @@ import os
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
-from ingredients.models import Ingredient, MeasurementUnit
+from ingredients.models import Ingredient
 from recipes.models import Favorite, Recipe, UsedIngredient
 from tags.models import Tag
 from users.models import Follow
@@ -14,21 +14,8 @@ User = get_user_model()
 
 def get_ingredients(data):
     obj_list = []
-    units = {}  # name: id
     for idx, row in enumerate(data, start=1):
         row['id'] = idx
-        # use custom handling for data with Foreign keys
-        unit = row.pop('measure_unit')
-        if unit in units:
-            row['measurement_unit'] = MeasurementUnit.objects.get(
-                id=units[unit]
-            )
-        else:
-            units[unit] = len(units) + 1
-            row['measurement_unit'] = MeasurementUnit.objects.create(
-                id=units[unit],
-                unit=unit,
-            )
         obj_list.append(Ingredient(**row))
     Ingredient.objects.bulk_create(obj_list)
 

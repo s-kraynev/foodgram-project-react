@@ -15,6 +15,6 @@ router.register(r'(?P<id>\d+)', ShoppingCartViewSet, basename='shopping')
 
 
 urlpatterns = [
-    path('download_shopping_cart/', download_ingredients),
     path('', include(router.urls)),
+    path('download_shopping_cart/', download_ingredients),
 ]
