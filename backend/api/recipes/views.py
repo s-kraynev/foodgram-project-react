@@ -17,8 +17,8 @@ from recipes.models import Favorite, Recipe, ShoppingCart
 
 from .serializers import (
     FavoriteSerializer,
-    ReadRecipeSerializer,
-    WriteRecipeSerializer,
+    RecipeReadSerializer,
+    RecipeWriteSerializer,
 )
 
 User = get_user_model()
@@ -41,9 +41,9 @@ class RecipeViewSet(DenyPutViewSet):
 
     def get_serializer_class(self):
         if self.action in ('create', 'partial_update'):
-            return WriteRecipeSerializer
+            return RecipeWriteSerializer
         elif self.action in ('list', 'retrieve'):
-            return ReadRecipeSerializer
+            return RecipeReadSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

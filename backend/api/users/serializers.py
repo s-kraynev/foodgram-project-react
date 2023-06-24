@@ -17,15 +17,9 @@ class ValidateUserSerializer:
             raise serializers.ValidationError(
                 'Пользователь me не может быть создан и изменен'
             )
-        if (
-            User.objects.filter(username=username).exists()
-            and not User.objects.filter(**attrs).exists()
-        ):
-            raise serializers.ValidationError('Пользователь уже существует')
-        if (
-            User.objects.filter(email=email).exists()
-            and not User.objects.filter(**attrs).exists()
-        ):
+        # NOTE: I took it from previous group project and forgot to remove.
+        # thank you for reminder, that it is not relevant anymore
+        if User.objects.filter(email=email).exists():
             raise serializers.ValidationError(
                 'Пользователь с такой почтой уже существует'
             )
@@ -55,6 +49,8 @@ class UserSerializer(ValidateUserSerializer, serializers.ModelSerializer):
 
 # NOTE: this class is used in settings.py
 class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
+    # NOTE: these fields are mentioned here, because we need to override some
+    # validations and explicitly show, that all fields are required
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+$',
         required=True,

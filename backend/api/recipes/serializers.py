@@ -42,7 +42,7 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class ReadRecipeSerializer(serializers.ModelSerializer):
+class RecipeReadSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=True, allow_null=False)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -73,7 +73,7 @@ class ReadRecipeSerializer(serializers.ModelSerializer):
         return Recipe.is_in_shopping_cart(obj, self.context['request'].user.id)
 
 
-class CreateUsedIngredientSerializer(serializers.ModelSerializer):
+class UsedIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         required=True, queryset=Ingredient.objects.all()
     )
@@ -83,7 +83,8 @@ class CreateUsedIngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount')
 
 
-class WriteRecipeSerializer(serializers.ModelSerializer):
+class RecipeWriteSerializer(serializers.ModelSerializer):
+    # NOTE: it was already allow_null=False on previous review too :)
     image = Base64ImageField(required=True, allow_null=False)
     tags = serializers.ListSerializer(
         required=True,
@@ -91,7 +92,7 @@ class WriteRecipeSerializer(serializers.ModelSerializer):
             required=True, queryset=Tag.objects.all()
         ),
     )
-    ingredients = CreateUsedIngredientSerializer(many=True, required=True)
+    ingredients = UsedIngredientCreateSerializer(many=True, required=True)
 
     class Meta:
         model = Recipe
