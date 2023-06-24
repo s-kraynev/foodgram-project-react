@@ -10,29 +10,20 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from recipes.models import Favorite, Recipe, ShoppingCart
-from tags.models import Tag
 from users.models import Follow
 
 from .filters import RecipeFilter
-from .mixins import DenyPutViewSet, ListRetrieveViewSet, ListViewSet
+from .mixins import DenyPutViewSet, ListViewSet
 from .serializers import (
     FavoriteSerializer,
     ReadRecipeSerializer,
     ShortRecipeSerializer,
     SubscribeSerializer,
-    TagSerializer,
     WriteRecipeSerializer,
 )
 from .utils import generate_pdf_file
 
 User = get_user_model()
-
-
-class TagsViewSet(ListRetrieveViewSet):
-    serializer_class = TagSerializer
-    permission_classes = (permissions.AllowAny,)
-    queryset = Tag.objects.all()
-    pagination_class = None
 
 
 class RecipeViewSet(DenyPutViewSet):

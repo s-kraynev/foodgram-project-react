@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
+from api.tags.serializers import TagSerializer
 from ingredients.models import Ingredient
 from recipes.models import Favorite, Recipe, ShoppingCart, UsedIngredient
 from tags.models import Tag
@@ -90,12 +91,6 @@ class RegisterSerializer(ValidateUserSerializer, serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super(RegisterSerializer, self).create(validated_data)
-
-
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = ('id', 'name', 'color', 'slug')
 
 
 class UsedIngredientSerializer(serializers.ModelSerializer):

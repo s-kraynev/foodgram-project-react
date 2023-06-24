@@ -8,13 +8,11 @@ from .views import (
     ShoppingCartViewSet,
     SubscribeViewSet,
     SubscriptionsViewSet,
-    TagsViewSet,
     download_ingredients,
 )
 
 router = DefaultRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')
-router.register(r'tags', TagsViewSet, basename='tags')
 router.register(r'recipes/(?P<id>\d+)', FavoriteViewSet, basename='favorite')
 router.register(
     r'recipes/(?P<id>\d+)', ShoppingCartViewSet, basename='shopping'
