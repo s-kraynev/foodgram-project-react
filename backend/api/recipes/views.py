@@ -31,7 +31,6 @@ class RecipeViewSet(DenyPutViewSet):
         filters.OrderingFilter,
     )
     filterset_class = RecipeFilter
-    ordering = ('-pub_date',)
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
@@ -56,6 +55,15 @@ class FavoriteViewSet(ViewSet):
     def get_recipe(self):
         return get_object_or_404(Recipe, id=self.kwargs.get('id'))
 
+    # NOTE: I could not use:
+    # https://www.django-rest-framework.org/api-guide/viewsets/#viewset-actions
+    # because I need to call DELETE/POST on the same url.
+    # destroy expects <pk> in url, and when I tried to override these methods,
+    # I got error, that it's not allowed to call DELETE on url /favorite.
+    # I did not find another way to handle it except the current implementation
+    # NOTE: I fight with it about 3 days, and did not find clear solution,
+    # so prefer to follow existing one if I have not clear example how to do
+    # it differently.
     @action(
         methods=['POST'],
         detail=False,

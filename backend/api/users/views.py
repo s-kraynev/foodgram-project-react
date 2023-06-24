@@ -63,6 +63,8 @@ class SubscribeViewSet(ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# NOTE: ViewSet does not have paginate_queryset and I got error:
+# 'SubscriptionsViewSet' object has no attribute 'paginate_queryset'
 class SubscriptionsViewSet(ListViewSet):
     queryset = Follow.objects.all()
 
