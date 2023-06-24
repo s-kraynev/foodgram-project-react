@@ -64,11 +64,11 @@ def get_recipes(data):
         for ingr in ingredients:
             ingredient_id, amount = ingr.split('-')
             ingr_data = {
+                'recipe': created_recipe,
                 'ingredient': Ingredient.objects.get(id=ingredient_id),
                 'amount': amount,
             }
-            used_ingredient = UsedIngredient.objects.create(**ingr_data)
-            created_recipe.ingredients.add(used_ingredient)
+            UsedIngredient.objects.create(**ingr_data)
 
 
 def get_favorites(data):

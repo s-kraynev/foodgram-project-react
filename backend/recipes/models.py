@@ -8,19 +8,6 @@ from tags.models import Tag
 User = get_user_model()
 
 
-class UsedIngredient(models.Model):
-    amount = models.PositiveIntegerField(
-        'Количество',
-        validators=(MinValueValidator(1),),
-        error_messages={'validators': 'Количество не может быть меньше 1!'},
-    )
-    ingredient = models.ForeignKey(
-        Ingredient,
-        related_name='used_ingredient',
-        on_delete=models.CASCADE,
-    )
-
-
 class Recipe(models.Model):
     author = models.ForeignKey(
         User,
@@ -37,12 +24,10 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
     tags = models.ManyToManyField(Tag)
     cooking_time = models.PositiveIntegerField('Время готовки (минут)')
-    # NOTE: I did not catch the idea of using "through" option.
-    # in one of previous sprints you said, that it's useless, because django
-    # creates help table itself. Do you mean, that I need to remove
-    # UsedIngredient and use the same form via "through" ?
-    # probbaly it will be the same as is... is not?
-    ingredients = models.ManyToManyField(UsedIngredient)
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='UsedIngredient'
+    )
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата публикации', db_index=True
     )
@@ -65,6 +50,28 @@ class Recipe(models.Model):
 
     def count_favorites(self):
         return Favorite.objects.filter(recipe=self).count()
+
+
+class UsedIngredient(models.Model):
+    amount = models.PositiveIntegerField(
+        'Количество',
+        validators=(MinValueValidator(1),),
+        error_messages={'validators': 'Количество не может быть меньше 1!'},
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        related_name='used_ingredient',
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        related_name='recipe',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return (f'Recipe {self.recipe} use {self.ingredient} '
+                f'with amount {self.amount}')
 
 
 class Favorite(models.Model):

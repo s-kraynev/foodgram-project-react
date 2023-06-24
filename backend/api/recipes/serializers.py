@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from api.common.serializer_fields import Base64ImageField
+from api.ingredients.serializers import IngredientSerializer
 from api.tags.serializers import TagSerializer
 from api.users.serializers import UserSerializer
 from ingredients.models import Ingredient
@@ -8,33 +9,12 @@ from recipes.models import Favorite, Recipe, UsedIngredient
 from tags.models import Tag
 
 
-class UsedIngredientSerializer(serializers.ModelSerializer):
-    measurement_unit = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
-    amount = serializers.IntegerField()
-
-    class Meta:
-        model = UsedIngredient
-        fields = (
-            'id',
-            'name',
-            'measurement_unit',
-            'amount',
-        )
-
-    def get_name(self, obj):
-        return obj.ingredient.name
-
-    def get_measurement_unit(self, obj):
-        return obj.ingredient.measurement_unit
-
-
 class RecipeReadSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=True, allow_null=False)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(required=True, many=True)
-    ingredients = UsedIngredientSerializer(required=True, many=True)
+    ingredients = IngredientSerializer(required=True, many=True)
     author = UserSerializer(required=True, many=False)
 
     class Meta:

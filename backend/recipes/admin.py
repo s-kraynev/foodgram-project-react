@@ -1,18 +1,18 @@
 from django.contrib import admin
 
-from recipes.models import UsedIngredient
 from .models import Favorite, Recipe, ShoppingCart
 
 
 class IngredientInline(admin.TabularInline):
-    model = UsedIngredient
+    model = Recipe.ingredients.through
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    #    inlines = [
-    #        IngredientInline,
-    #    ]
+    inlines = [
+        IngredientInline,
+    ]
+    exclude = ['ingredients']
     list_display = (
         'name',
         'author',
