@@ -154,7 +154,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
+    'DEFAULT_PAGINATION_CLASS': 'api.common.pagination.CustomPagination',
     'PAGE_SIZE': 6,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
@@ -179,8 +179,8 @@ MID_SMALL_INT_LENGTH = 150
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user_create': 'api.serializers.RegisterSerializer',
-        'user': 'api.serializers.UserSerializer',
+        'user_create': 'api.common.serializers.RegisterSerializer',
+        'user': 'api.common.serializers.UserSerializer',
     },
     # 'HIDE_USERS': False,
     'PERMISSIONS': {
