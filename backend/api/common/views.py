@@ -9,16 +9,14 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from ingredients.models import Ingredient
 from recipes.models import Favorite, Recipe, ShoppingCart
 from tags.models import Tag
 from users.models import Follow
 
-from .filters import IngredientFilter, RecipeFilter
+from .filters import RecipeFilter
 from .mixins import DenyPutViewSet, ListRetrieveViewSet, ListViewSet
 from .serializers import (
     FavoriteSerializer,
-    IngredientSerializer,
     ReadRecipeSerializer,
     ShortRecipeSerializer,
     SubscribeSerializer,
@@ -94,15 +92,6 @@ class FavoriteViewSet(ViewSet):
         serializer.check_recipe_del_favorite(user, recipe)
         Favorite.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class IngredientViewSet(ListRetrieveViewSet):
-    serializer_class = IngredientSerializer
-    permission_classes = (permissions.AllowAny,)
-    queryset = Ingredient.objects.all()
-    pagination_class = None
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = IngredientFilter
 
 
 class SubscribeViewSet(ViewSet):

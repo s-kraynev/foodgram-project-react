@@ -98,18 +98,6 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
-class IngredientSerializer(serializers.ModelSerializer):
-    measurement_unit = serializers.StringRelatedField()
-
-    class Meta:
-        model = Ingredient
-        fields = (
-            'id',
-            'name',
-            'measurement_unit',
-        )
-
-
 class UsedIngredientSerializer(serializers.ModelSerializer):
     measurement_unit = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()

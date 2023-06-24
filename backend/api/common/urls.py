@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     FavoriteViewSet,
-    IngredientViewSet,
     RecipeViewSet,
     ShoppingCartViewSet,
     SubscribeViewSet,
@@ -16,7 +15,6 @@ from .views import (
 router = DefaultRouter()
 router.register(r'recipes', RecipeViewSet, basename='recipes')
 router.register(r'tags', TagsViewSet, basename='tags')
-router.register(r'ingredients', IngredientViewSet, basename='ingredients')
 router.register(r'recipes/(?P<id>\d+)', FavoriteViewSet, basename='favorite')
 router.register(
     r'recipes/(?P<id>\d+)', ShoppingCartViewSet, basename='shopping'
