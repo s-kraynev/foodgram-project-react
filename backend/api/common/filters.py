@@ -3,13 +3,8 @@ from django_filters.rest_framework import BooleanFilter, CharFilter, FilterSet
 from recipes.models import Ingredient, Recipe
 
 
-def filter_name(queryset, name, value):
-    lookup = '__'.join([name, 'startswith'])
-    return queryset.filter(**{lookup: value})
-
-
 class IngredientFilter(FilterSet):
-    name = CharFilter(field_name='name', method=filter_name)
+    name = CharFilter(field_name='name', lookup_expr='startswith')
 
     class Meta:
         model = Ingredient
@@ -26,6 +21,10 @@ class RecipeFilter(FilterSet):
         fields = ['is_favorited', 'is_in_shopping_cart', 'author', 'tags']
 
     def filter_queryset(self, queryset):
+        # NOTE: behaviour with using is_in_shopping_cart and is_favorited
+        # will return empty result (in case if recipe are not favorited and
+        # is in shopping_cart). I think, that it's expected.
+        # F.e. we could add page with only favorited recipes in shopping_cart.
         author = self.data.get('author')
         if author is not None:
             queryset = queryset.filter(author=author)
