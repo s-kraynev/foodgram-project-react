@@ -179,10 +179,9 @@ MID_SMALL_INT_LENGTH = 150
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user_create': 'api.common.serializers.RegisterSerializer',
-        'user': 'api.common.serializers.UserSerializer',
+        'user_create': 'api.users.serializers.RegisterSerializer',
+        'user': 'api.users.serializers.UserSerializer',
     },
-    # 'HIDE_USERS': False,
     'PERMISSIONS': {
         'user_create': ['rest_framework.permissions.AllowAny'],
         'user_list': ['rest_framework.permissions.AllowAny'],
