@@ -18,6 +18,7 @@ class Ingredient(models.Model):
         related_name='ingredient',
         on_delete=models.CASCADE,
         unique=False,
+        verbose_name='Единица измерения',
     )
     name = models.CharField('Название', max_length=200)
 

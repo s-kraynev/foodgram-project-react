@@ -167,7 +167,5 @@ docker compose exec nginx cp -r /backend_static/. /usr/share/nginx/html/static/.
 - :white_check_mark: [s-kraynev](https://github.com/s-kraynev)
 
 TODO:
-- разделение api на приложения
-- remove debug option
-- set correct allowed hosts
-- create admin user
+- add inline logic to recipe admin model
+- create admin user on cloud server

@@ -64,10 +64,16 @@ class Recipe(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='favorite_user'
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorite_user',
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='favorite_recipe'
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorite_recipe',
+        verbose_name='Рецепт в избpранном',
     )
 
     class Meta:
@@ -80,10 +86,16 @@ class Favorite(models.Model):
 
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='shopping_user'
+        User,
+        on_delete=models.CASCADE,
+        related_name='shopping_user',
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name='shopping_recipe'
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_recipe',
+        verbose_name='Рецепт в корзине покупок',
     )
 
     class Meta:

@@ -9,10 +9,10 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    list_display = ("username", "email", "first_name", "last_name")
-    list_filter = ("first_name", "email")
+    list_display = ('username', 'email', 'first_name', 'last_name')
+    list_filter = ('first_name', 'email')
 
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('user', 'author')
