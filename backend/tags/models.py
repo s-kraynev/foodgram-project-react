@@ -1,4 +1,5 @@
 from django.db import models
+from django_extensions.validators import HexValidator
 
 
 class Tag(models.Model):
@@ -15,6 +16,7 @@ class Tag(models.Model):
     color = models.CharField(
         'Цвет',
         max_length=7,
+        validators=[HexValidator(length=7)],
     )
 
     class Meta:
