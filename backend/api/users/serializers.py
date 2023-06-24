@@ -1,6 +1,4 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from api.common.serializers import ShortRecipeSerializer

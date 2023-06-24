@@ -2,10 +2,7 @@ from django.urls import include, path, re_path
 from djoser.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 
-from .views import (
-    SubscribeViewSet,
-    SubscriptionsViewSet,
-)
+from .views import SubscribeViewSet, SubscriptionsViewSet
 
 router = DefaultRouter()
 router.register(

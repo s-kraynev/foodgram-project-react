@@ -24,10 +24,7 @@ class Recipe(models.Model):
     text = models.TextField('Описание')
     tags = models.ManyToManyField(Tag)
     cooking_time = models.PositiveIntegerField('Время готовки (минут)')
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        through='UsedIngredient'
-    )
+    ingredients = models.ManyToManyField(Ingredient, through='UsedIngredient')
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата публикации', db_index=True
     )
@@ -70,8 +67,10 @@ class UsedIngredient(models.Model):
     )
 
     def __str__(self):
-        return (f'Recipe {self.recipe} use {self.ingredient} '
-                f'with amount {self.amount}')
+        return (
+            f'Recipe {self.recipe} use {self.ingredient} '
+            f'with amount {self.amount}'
+        )
 
 
 class Favorite(models.Model):
