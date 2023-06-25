@@ -13,7 +13,7 @@ from api.common.filters import RecipeFilter
 from api.common.mixins import DenyPutViewSet
 from api.common.serializers import ShortRecipeSerializer
 from api.common.utils import generate_pdf_file
-from recipes.models import Favorite, Recipe, ShoppingCart
+from recipes.models import Favorite, Recipe, ShoppingCart, UsedIngredient
 
 from .serializers import (
     FavoriteSerializer,
@@ -130,10 +130,12 @@ def download_ingredients(request):
     for shopping_record in shopping_records:
         for ingredient in shopping_record.recipe.ingredients.all():
             key = (
-                ingredient.ingredient.name,
-                ingredient.ingredient.measurement_unit.unit,
+                ingredient.name,
+                ingredient.measurement_unit,
             )
-            ingredients_to_buy[key] += ingredient.amount
+            used_ingredint = UsedIngredient.objects.get(
+                ingredient=ingredient, recipe=shopping_record.recipe)
+            ingredients_to_buy[key] += used_ingredint.amount
     # prepare final list of ingredients
     output_text = []
     for key, amount in ingredients_to_buy.items():
