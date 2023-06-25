@@ -193,21 +193,19 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         instance.tags.set(tags)
 
         ingredients = validated_data.pop('ingredients')
-        new_ingredients = []
-        old_ingredients = list(instance.ingredients.all())
-        for ingredient in ingredients:
-            new_ingredients.append(
-                UsedIngredient.objects.create(
-                    **{
-                        'recipe': instance,
-                        'amount': ingredient['amount'],
-                        'ingredient': ingredient['id'],
-                    }
-                )
+        for ingr in instance.ingredients.all():
+            used_ingr = UsedIngredient.objects.get(
+                recipe=instance, ingredient=ingr
             )
-
-        for ingr in old_ingredients:
-            ingr.delete()
+            used_ingr.delete()
+        for ingredient in ingredients:
+            UsedIngredient.objects.create(
+                **{
+                    'recipe': instance,
+                    'amount': ingredient['amount'],
+                    'ingredient': ingredient['id'],
+                }
+            )
 
         instance.save()
         return instance
