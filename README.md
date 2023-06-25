@@ -1,8 +1,8 @@
 ## Сервер с приложением:
 url: https://skr-foodgram.ddns.net
 админка:
-- login: admin
-- password: (фамилия латиницей)
+- login: admin@ya.ru
+- password: (фамилия ревьювера латиницей)
 
 ## Проект Foodgram
 

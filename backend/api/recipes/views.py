@@ -134,7 +134,8 @@ def download_ingredients(request):
                 ingredient.measurement_unit,
             )
             used_ingredint = UsedIngredient.objects.get(
-                ingredient=ingredient, recipe=shopping_record.recipe)
+                ingredient=ingredient, recipe=shopping_record.recipe
+            )
             ingredients_to_buy[key] += used_ingredint.amount
     # prepare final list of ingredients
     output_text = []

@@ -1,11 +1,10 @@
 from collections import OrderedDict
 
+from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
-from rest_framework import serializers
 
 from api.common.serializer_fields import Base64ImageField
-from api.ingredients.serializers import IngredientSerializer
 from api.tags.serializers import TagSerializer
 from api.users.serializers import UserSerializer
 from ingredients.models import Ingredient
@@ -38,8 +37,13 @@ class UsedIngredientReadSerializer(serializers.ModelSerializer):
                         # in root serializer
                         attribute = instance.used_ingredient.last().amount
                     else:
-                        attribute = instance.used_ingredient.filter(
-                            recipe=self.root.instance).get().amount
+                        attribute = (
+                            instance.used_ingredient.filter(
+                                recipe=self.root.instance
+                            )
+                            .get()
+                            .amount
+                        )
                 else:
                     attribute = field.get_attribute(instance)
             except SkipField:
@@ -50,7 +54,11 @@ class UsedIngredientReadSerializer(serializers.ModelSerializer):
             #
             # For related fields with `use_pk_only_optimization` we need to
             # resolve the pk value.
-            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            check_for_none = (
+                attribute.pk
+                if isinstance(attribute, PKOnlyObject)
+                else attribute
+            )
             if check_for_none is None:
                 ret[field.field_name] = None
             else:
@@ -109,8 +117,13 @@ class UsedIngredientCreateSerializer(serializers.ModelSerializer):
             try:
                 # custom handling for amount
                 if field.field_name == 'amount':
-                    attribute = instance.used_ingredient.filter(
-                        recipe=self.root.instance).get().amount
+                    attribute = (
+                        instance.used_ingredient.filter(
+                            recipe=self.root.instance
+                        )
+                        .get()
+                        .amount
+                    )
                 else:
                     attribute = field.get_attribute(instance)
             except SkipField:
@@ -121,7 +134,11 @@ class UsedIngredientCreateSerializer(serializers.ModelSerializer):
             #
             # For related fields with `use_pk_only_optimization` we need to
             # resolve the pk value.
-            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            check_for_none = (
+                attribute.pk
+                if isinstance(attribute, PKOnlyObject)
+                else attribute
+            )
             if check_for_none is None:
                 ret[field.field_name] = None
             else:
@@ -156,11 +173,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         for ingredient in ingredients:
-            UsedIngredient.objects.create(**{
-                'recipe': recipe,
-                'amount': ingredient['amount'],
-                'ingredient': ingredient['id']
-            })
+            UsedIngredient.objects.create(
+                **{
+                    'recipe': recipe,
+                    'amount': ingredient['amount'],
+                    'ingredient': ingredient['id'],
+                }
+            )
         return recipe
 
     def update(self, instance, validated_data):
@@ -178,11 +197,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         old_ingredients = list(instance.ingredients.all())
         for ingredient in ingredients:
             new_ingredients.append(
-                UsedIngredient.objects.create(**{
-                    'recipe': instance,
-                    'amount': ingredient['amount'],
-                    'ingredient': ingredient['id']
-                })
+                UsedIngredient.objects.create(
+                    **{
+                        'recipe': instance,
+                        'amount': ingredient['amount'],
+                        'ingredient': ingredient['id'],
+                    }
+                )
             )
 
         for ingr in old_ingredients:
