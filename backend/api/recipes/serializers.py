@@ -1,3 +1,7 @@
+from collections import OrderedDict
+
+from rest_framework.fields import SkipField
+from rest_framework.relations import PKOnlyObject
 from rest_framework import serializers
 
 from api.common.serializer_fields import Base64ImageField
@@ -9,12 +13,59 @@ from recipes.models import Favorite, Recipe, UsedIngredient
 from tags.models import Tag
 
 
+class UsedIngredientReadSerializer(serializers.ModelSerializer):
+    name = serializers.StringRelatedField()
+    measurement_unit = serializers.StringRelatedField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = UsedIngredient
+        fields = ('id', 'amount', 'name', 'measurement_unit')
+
+    def to_representation(self, instance):
+        ret = OrderedDict()
+        fields = self._readable_fields
+
+        for field in fields:
+            try:
+                # custom handling for amount
+                if field.field_name == 'amount':
+                    if isinstance(self.root.instance, list):
+                        # NOTE: need help! I could not find a way to get
+                        # correct parent object for ingredient.
+                        # f.e. i it belongs to different recipes and I list
+                        # all recipes in main page - I get list of instances
+                        # in root serializer
+                        attribute = instance.used_ingredient.last().amount
+                    else:
+                        attribute = instance.used_ingredient.filter(
+                            recipe=self.root.instance).get().amount
+                else:
+                    attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            # We skip `to_representation` for `None` values so that fields do
+            # not have to explicitly deal with that case.
+            #
+            # For related fields with `use_pk_only_optimization` we need to
+            # resolve the pk value.
+            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            if check_for_none is None:
+                ret[field.field_name] = None
+            else:
+                ret[field.field_name] = field.to_representation(attribute)
+
+        return ret
+
+
 class RecipeReadSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=True, allow_null=False)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(required=True, many=True)
-    ingredients = IngredientSerializer(required=True, many=True)
+    # NOTE: need help - how to add amount here????
+    ingredients = UsedIngredientReadSerializer(required=True, many=True)
     author = UserSerializer(required=True, many=False)
 
     class Meta:
@@ -44,10 +95,39 @@ class UsedIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
         required=True, queryset=Ingredient.objects.all()
     )
+    amount = serializers.IntegerField(required=True)
 
     class Meta:
         model = UsedIngredient
         fields = ('id', 'amount')
+
+    def to_representation(self, instance):
+        ret = OrderedDict()
+        fields = self._readable_fields
+
+        for field in fields:
+            try:
+                # custom handling for amount
+                if field.field_name == 'amount':
+                    attribute = instance.used_ingredient.filter(
+                        recipe=self.root.instance).get().amount
+                else:
+                    attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            # We skip `to_representation` for `None` values so that fields do
+            # not have to explicitly deal with that case.
+            #
+            # For related fields with `use_pk_only_optimization` we need to
+            # resolve the pk value.
+            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            if check_for_none is None:
+                ret[field.field_name] = None
+            else:
+                ret[field.field_name] = field.to_representation(attribute)
+
+        return ret
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -76,9 +156,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         for ingredient in ingredients:
-            ingredient['ingredient'] = ingredient.pop('id')
-            used_ingredient = UsedIngredient.objects.create(**ingredient)
-            recipe.ingredients.add(used_ingredient)
+            UsedIngredient.objects.create(**{
+                'recipe': recipe,
+                'amount': ingredient['amount'],
+                'ingredient': ingredient['id']
+            })
         return recipe
 
     def update(self, instance, validated_data):
@@ -95,9 +177,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         new_ingredients = []
         old_ingredients = list(instance.ingredients.all())
         for ingredient in ingredients:
-            ingredient['ingredient'] = ingredient.pop('id')
-            new_ingredients.append(UsedIngredient.objects.create(**ingredient))
-        instance.ingredients.set(new_ingredients)
+            new_ingredients.append(
+                UsedIngredient.objects.create(**{
+                    'recipe': instance,
+                    'amount': ingredient['amount'],
+                    'ingredient': ingredient['id']
+                })
+            )
 
         for ingr in old_ingredients:
             ingr.delete()
