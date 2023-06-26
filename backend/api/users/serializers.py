@@ -75,20 +75,22 @@ class SubscribeSerializer(UserSerializer):
             'recipes',
         )
 
-    @staticmethod
-    def check_on_subscribe(user, author):
+    def validate(self, attrs):
+        method = self.context['request'].method
+        user = self.context['request'].user
+        author = self.instance
         if user == author:
             raise serializers.ValidationError(
-                'Нельзя подписаться на самого себя'
+                'Нельзя подписаться/отписаться на/от самого себя'
             )
-        if Follow.objects.filter(user=user, author=author).exists():
-            raise serializers.ValidationError(
-                'Вы уже подписаны на этого автора'
-            )
-
-    @staticmethod
-    def check_on_unsubscribe(user, author):
-        if not Follow.objects.filter(user=user, author=author).exists():
+        subscription_exist = Follow.objects.filter(
+            user=user, author=author).exists()
+        if method == 'DELETE' and not subscription_exist:
             raise serializers.ValidationError(
                 'Ошибка отписки: Вы не подписаны на этого автора.'
             )
+        elif method == 'POST' and subscription_exist:
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого автора'
+            )
+        return attrs

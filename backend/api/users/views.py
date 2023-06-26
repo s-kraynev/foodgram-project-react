@@ -30,8 +30,7 @@ class SubscribeViewSet(ViewSet):
         serializer = SubscribeSerializer(
             author, data=request.data, context={'request': request}
         )
-        serializer.is_valid()
-        serializer.check_on_subscribe(user, author)
+        serializer.is_valid(raise_exception=True)
         Follow.objects.create(user=user, author=author)
         # sorting number of recipes
         recipes_limit = request.query_params.get('recipes_limit')
@@ -56,8 +55,7 @@ class SubscribeViewSet(ViewSet):
         serializer = SubscribeSerializer(
             author, data=request.data, context={'request': request}
         )
-        serializer.is_valid()
-        serializer.check_on_unsubscribe(user, author)
+        serializer.is_valid(raise_exception=True)
         Follow.objects.get(user=user, author=author).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
