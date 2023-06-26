@@ -16,7 +16,7 @@ class User(AbstractUser):
         unique=True,
         verbose_name='Почта',
     )
-    # redefine password, because it has custom length <=150
+    # NOTE: redefine password, because it has custom length <=150
     # the default value is a <=128
     password = models.CharField(
         max_length=settings.MID_SMALL_INT_LENGTH,
