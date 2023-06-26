@@ -19,6 +19,7 @@ if not SECRET_KEY:
     sys.exit('Ошибка ключа')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# NOTE: I forgot to drop DEBUG after debugging
 DEBUG = bool(os.getenv('DEBUG', False))
 
 ALLOWED_HOSTS = [os.getenv('HOSTS', 'skr-foodgram.ddns.net')]
@@ -168,12 +169,9 @@ MID_INT_LENGTH = 200
 
 MID_SMALL_INT_LENGTH = 150
 
-# NOTE: I thought about removing extra endpoints, but did not find the best
-# solution. I met the question:
+# NOTE: Disable extra djoser endpoints by setting AdminOnly permissions
 # https://stackoverflow.com/questions/54846372/djoser-disable-unused-endpoints
-# And it says, that it's not possible.
-# So I decided to establish only necessary urls instead of full viewset
-# ALso I could set permissions onlyAdmin for unused endpoints.
+# Also establish only necessary urls instead of full viewset
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
@@ -183,5 +181,12 @@ DJOSER = {
         'user_create': ['rest_framework.permissions.AllowAny'],
         'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.AllowAny'],
+        'activation': ['rest_framework.permissions.IsAdminUser'],
+        'password_reset': ['rest_framework.permissions.IsAdminUser'],
+        'password_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
+        'username_reset': ['rest_framework.permissions.IsAdminUser'],
+        'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
+        'set_username': ['rest_framework.permissions.IsAdminUser'],
+        'user_delete': ['rest_framework.permissions.IsAdminUser'],
     },
 }
