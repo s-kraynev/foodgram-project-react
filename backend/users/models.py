@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -33,15 +34,15 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def clean(self):
+        super().clean()
+        if self.username == 'me':
+            raise ValidationError(
+                'Имя пользователя содержит недопустимый символ'
+            )
+
 
 class Follow(models.Model):
-    # NOTE: it was a shame to hear, that it was written by different people.
-    # I copied it from our group project and just leaft as it was, because
-    # it worked as I wanted. The another model (Favorite) was added later and
-    # just edited in different style during debug.
-    # please do not say something like that, because it really makes my spent
-    # time useless! I added all lines mysqlf to this project. You could read
-    # full git history, if you don't trust me.
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -58,6 +59,14 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Подписчик'
         verbose_name_plural = 'Подписчики'
+        # NOTE: looks like I was wrong about Follow class. I told about Users
+        # part, but the Follow I took from old work. However, it was also
+        # reviewed it :)
+        # https://github.com/s-kraynev/hw05_final/blob/master/yatube/posts/
+        # models.py#L103
+        # In group I found the right version, but this particular comment was
+        # fixed not by me and I forgot about it after review in group project.
+        # so it is my shame.
         constraints = (
             models.UniqueConstraint(
                 fields=(
