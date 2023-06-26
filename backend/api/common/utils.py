@@ -31,7 +31,7 @@ def later_pages(canvas, doc):
     canvas.saveState()
     canvas.setFont(FONT_NAME, 9)
     canvas.drawString(
-        inch, 0.25 * inch, "Страница %d %s" % (doc.page, PAGE_INFO)
+        inch, 0.25 * inch, "Страница %d / %s" % (doc.page, PAGE_INFO)
     )
     canvas.restoreState()
 

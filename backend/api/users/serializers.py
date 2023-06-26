@@ -48,6 +48,12 @@ class UserSerializer(ValidateUserSerializer, serializers.ModelSerializer):
 class SubscribeSerializer(UserSerializer):
     recipes = ShortRecipeSerializer(many=True, source='recipe', required=False)
 
+    # NOTE: looks like 'fields' and 'readonly_fields' should be displayed
+    # together: https://docs.djangoproject.com/en/4.2/ref/contrib/admin/
+    # #django.contrib.admin.ModelAdmin.readonly_fields
+    # Note that when specifying ModelAdmin.fields or ModelAdmin.fieldsets
+    # the read-only fields must be present to be shown
+    # (they are ignored otherwise).
     class Meta:
         model = User
         fields = (
