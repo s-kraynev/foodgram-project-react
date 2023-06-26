@@ -14,12 +14,14 @@ class Recipe(models.Model):
         related_name='recipe',
         on_delete=models.CASCADE,
     )
+    # NOTE: I like django style too, but "black" util does not allow to split
+    # on several lines short lines. Maybe it could be configured, but
+    # I have not time to find such option for now. On team project I also
+    # tried to find solution for such behaviour, but failed with it.
     name = models.CharField('Название', max_length=200)
     image = models.ImageField(
         'Картинка',
         upload_to='images/',
-        null=False,
-        default=None,
     )
     text = models.TextField('Описание')
     tags = models.ManyToManyField(Tag)
@@ -90,6 +92,15 @@ class Favorite(models.Model):
     class Meta:
         verbose_name = 'Любимый рецепт'
         verbose_name_plural = 'Любимые рецепты'
+        constraints = (
+            models.UniqueConstraint(
+                fields=(
+                    'user',
+                    'recipe',
+                ),
+                name='unique recipe in favorite',
+            ),
+        )
 
     def __str__(self):
         return f'{self.recipe} в списке избранных рецептов у {self.user}'
@@ -112,6 +123,15 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = 'Покупка'
         verbose_name_plural = 'Покупки'
+        constraints = (
+            models.UniqueConstraint(
+                fields=(
+                    'user',
+                    'recipe',
+                ),
+                name='unique recipe in shopping cart',
+            ),
+        )
 
     def __str__(self):
         return f'{self.recipe} в списке покупок у {self.user}'
