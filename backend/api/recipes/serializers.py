@@ -216,17 +216,3 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = '__all__'
         read_only_fields = ('id', 'recipe', 'user')
-
-    @staticmethod
-    def check_recipe_add_favorite(user, recipe):
-        if Favorite.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError(
-                'Уже находится в избранных рецептах'
-            )
-
-    @staticmethod
-    def check_recipe_del_favorite(user, recipe):
-        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
-            raise serializers.ValidationError(
-                'Рецепт не найден в избранных рецептах'
-            )

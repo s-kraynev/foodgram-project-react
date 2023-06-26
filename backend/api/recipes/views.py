@@ -70,22 +70,30 @@ class FavoriteViewSet(ViewSet):
     )
     def makes_favorite(self, request, **kwargs):
         user = request.user
-        serializer = FavoriteSerializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        recipe = self.get_recipe()
-        serializer.check_recipe_add_favorite(user, recipe)
-        Favorite.objects.create(user=user, recipe=recipe)
-        return Response(
-            ShortRecipeSerializer(recipe).data, status=status.HTTP_200_OK
+        input_serializer = FavoriteSerializer(
+            user, data=request.data, context={'request': request}
         )
+        input_serializer.is_valid(raise_exception=True)
+        recipe = self.get_recipe()
+        output_serializer = ShortRecipeSerializer(
+            recipe, context={'request': request}
+        )
+        output_serializer.validate({'favorite'})
+        Favorite.objects.create(user=user, recipe=recipe)
+        return Response(output_serializer.data, status=status.HTTP_200_OK)
 
     @makes_favorite.mapping.delete
     def delete_favorite(self, request, **kwargs):
         user = request.user
-        serializer = FavoriteSerializer(user, data=request.data)
+        serializer = FavoriteSerializer(
+            user, data=request.data, context={'request': request}
+        )
         serializer.is_valid(raise_exception=True)
         recipe = self.get_recipe()
-        serializer.check_recipe_del_favorite(user, recipe)
+        output_serializer = ShortRecipeSerializer(
+            recipe, context={'request': request}
+        )
+        output_serializer.validate({'favorite'})
         Favorite.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -104,9 +112,10 @@ class ShoppingCartViewSet(ViewSet):
     def add_to_shopping_cart(self, request, **kwargs):
         user = request.user
         recipe = self.get_recipe()
-        serializer = ShortRecipeSerializer(recipe, data=request.data)
-        serializer.is_valid()
-        serializer.check_on_add_to_shopping_cart(user, recipe)
+        serializer = ShortRecipeSerializer(
+            recipe, context={'request': request}
+        )
+        serializer.validate({'shopping'})
         ShoppingCart.objects.create(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -114,9 +123,10 @@ class ShoppingCartViewSet(ViewSet):
     def remove_from_shopping_cart(self, request, **kwargs):
         user = request.user
         recipe = self.get_recipe()
-        serializer = ShortRecipeSerializer(recipe, data=request.data)
-        serializer.is_valid()
-        serializer.check_on_remove_from_shopping_cart(user, recipe)
+        serializer = ShortRecipeSerializer(
+            recipe, context={'request': request}
+        )
+        serializer.validate({'shopping'})
         ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(serializer.data, status=status.HTTP_200_OK)
 

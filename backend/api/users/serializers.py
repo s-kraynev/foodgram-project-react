@@ -84,7 +84,8 @@ class SubscribeSerializer(UserSerializer):
                 'Нельзя подписаться/отписаться на/от самого себя'
             )
         subscription_exist = Follow.objects.filter(
-            user=user, author=author).exists()
+            user=user, author=author
+        ).exists()
         if method == 'DELETE' and not subscription_exist:
             raise serializers.ValidationError(
                 'Ошибка отписки: Вы не подписаны на этого автора.'
