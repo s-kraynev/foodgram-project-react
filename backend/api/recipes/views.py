@@ -14,7 +14,6 @@ from api.common.mixins import DenyPutViewSet
 from api.common.serializers import ShortRecipeSerializer
 from api.common.utils import generate_pdf_file
 from recipes.models import Favorite, Recipe, ShoppingCart, UsedIngredient
-
 from .serializers import (
     FavoriteSerializer,
     RecipeReadSerializer,

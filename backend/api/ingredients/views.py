@@ -4,7 +4,6 @@ from rest_framework import permissions
 from api.common.filters import IngredientFilter
 from api.common.mixins import ListRetrieveViewSet
 from ingredients.models import Ingredient
-
 from .serializers import IngredientSerializer
 
 

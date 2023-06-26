@@ -7,7 +7,6 @@ from rest_framework.viewsets import ViewSet
 
 from api.common.mixins import ListViewSet
 from users.models import Follow
-
 from .serializers import SubscribeSerializer
 
 User = get_user_model()
@@ -65,6 +64,10 @@ class SubscribeViewSet(ViewSet):
 
 # NOTE: ViewSet does not have paginate_queryset and I got error:
 # 'SubscriptionsViewSet' object has no attribute 'paginate_queryset'
+# It happens because:
+# - ViewSet has not method 'paginate_queryset'
+# - ListViewSet is inherited from GenericViewSet
+# - GenericViewSet extends simple ViewSet and adds paginate_queryset method
 class SubscriptionsViewSet(ListViewSet):
     queryset = Follow.objects.all()
 
