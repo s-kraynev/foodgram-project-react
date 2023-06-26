@@ -6,8 +6,8 @@ from .tags.urls import urlpatterns as tags_patterns
 from .users.urls import urlpatterns as users_patterns
 
 urlpatterns = [
-    path('', include(ingredients_patterns)),
-    path('', include(tags_patterns)),
+    path('ingredients/', include(ingredients_patterns)),
+    path('tags/', include(tags_patterns)),
     path('recipes/', include(recipes_patterns)),
     path('users/', include(users_patterns)),
     path('auth/', include('djoser.urls.authtoken')),
