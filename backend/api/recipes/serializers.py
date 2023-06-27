@@ -13,58 +13,17 @@ from tags.models import Tag
 
 
 class UsedIngredientReadSerializer(serializers.ModelSerializer):
-    name = serializers.StringRelatedField()
-    measurement_unit = serializers.StringRelatedField()
-    amount = serializers.IntegerField()
-
     class Meta:
         model = UsedIngredient
         fields = ('id', 'amount', 'name', 'measurement_unit')
 
     def to_representation(self, instance):
-        ret = OrderedDict()
-        fields = self._readable_fields
-
-        for field in fields:
-            try:
-                # custom handling for amount
-                if field.field_name == 'amount':
-                    if isinstance(self.root.instance, list):
-                        # NOTE: need help! I could not find a way to get
-                        # correct parent object for ingredient.
-                        # f.e. i it belongs to different recipes and I list
-                        # all recipes in main page - I get list of instances
-                        # in root serializer
-                        attribute = instance.used_ingredient.last().amount
-                    else:
-                        attribute = (
-                            instance.used_ingredient.filter(
-                                recipe=self.root.instance
-                            )
-                            .get()
-                            .amount
-                        )
-                else:
-                    attribute = field.get_attribute(instance)
-            except SkipField:
-                continue
-
-            # We skip `to_representation` for `None` values so that fields do
-            # not have to explicitly deal with that case.
-            #
-            # For related fields with `use_pk_only_optimization` we need to
-            # resolve the pk value.
-            check_for_none = (
-                attribute.pk
-                if isinstance(attribute, PKOnlyObject)
-                else attribute
-            )
-            if check_for_none is None:
-                ret[field.field_name] = None
-            else:
-                ret[field.field_name] = field.to_representation(attribute)
-
-        return ret
+        return {
+            'id': instance.ingredient.id,
+            'name': instance.ingredient.name,
+            'measurement_unit': instance.ingredient.measurement_unit,
+            'amount': instance.amount
+        }
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
@@ -72,8 +31,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(required=True, many=True)
-    # NOTE: need help - how to add amount here????
-    ingredients = UsedIngredientReadSerializer(required=True, many=True)
+    ingredients = UsedIngredientReadSerializer(
+        source='recipe', required=True, many=True)
     author = UserSerializer(required=True, many=False)
 
     class Meta:
