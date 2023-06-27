@@ -41,7 +41,9 @@ class SubscribeViewSet(ViewSet):
 
         for author in iteration_data:
             display_data.append(author.copy())
-            display_data[-1]['recipes_count'] = len(display_data[-1]['recipes'])
+            display_data[-1]['recipes_count'] = len(
+                display_data[-1]['recipes']
+            )
             if recipes_limit is not None:
                 display_data[-1]['recipes'] = display_data[-1]['recipes'][
                     : int(recipes_limit)
@@ -85,7 +87,9 @@ class SubscriptionsViewSet(ListViewSet):
         display_data = []
         for author in serializer.data:
             display_data.append(author.copy())
-            display_data[-1]['recipes_count'] = len(display_data[-1]['recipes'])
+            display_data[-1]['recipes_count'] = len(
+                display_data[-1]['recipes']
+            )
             if recipes_limit is not None:
                 display_data[-1]['recipes'] = display_data[-1]['recipes'][
                     : int(recipes_limit)

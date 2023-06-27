@@ -22,9 +22,9 @@ class Tag(models.Model):
                 message=(
                     'Цвет должен быть представлен HEX кодом, например: #f54fa6'
                 ),
-                code='invalid_color'
+                code='invalid_color',
             )
-        ]
+        ],
     )
 
     class Meta:

@@ -22,7 +22,7 @@ class UsedIngredientReadSerializer(serializers.ModelSerializer):
             'id': instance.ingredient.id,
             'name': instance.ingredient.name,
             'measurement_unit': instance.ingredient.measurement_unit,
-            'amount': instance.amount
+            'amount': instance.amount,
         }
 
 
@@ -32,7 +32,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField()
     tags = TagSerializer(required=True, many=True)
     ingredients = UsedIngredientReadSerializer(
-        source='recipe', required=True, many=True)
+        source='recipe', required=True, many=True
+    )
     author = UserSerializer(required=True, many=False)
 
     class Meta:

@@ -38,7 +38,7 @@ class User(AbstractUser):
         super().clean()
         if self.username == 'me':
             raise ValidationError(
-                'Имя пользователя содержит недопустимый символ'
+                'Имя пользователя "me" запрещено к использованию'
             )
 
 
@@ -79,3 +79,8 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.user} подписан на пользователя: {self.author}'
+
+    def clean(self):
+        super().clean()
+        if self.user == self.author:
+            raise ValidationError('Нельзя подписаться на самого себя')

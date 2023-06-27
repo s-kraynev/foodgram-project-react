@@ -25,7 +25,13 @@ class Recipe(models.Model):
     )
     text = models.TextField('Описание')
     tags = models.ManyToManyField(Tag)
-    cooking_time = models.PositiveIntegerField('Время готовки (минут)')
+    cooking_time = models.PositiveIntegerField(
+        'Время готовки (минут)',
+        validators=[MinValueValidator(1)],
+        error_messages={
+            'validators': 'Время готовки должно быть более минуты'
+        },
+    )
     ingredients = models.ManyToManyField(Ingredient, through='UsedIngredient')
     pub_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Дата публикации', db_index=True
