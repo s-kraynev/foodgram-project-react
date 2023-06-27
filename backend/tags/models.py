@@ -1,28 +1,5 @@
-from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.db import models
-from django_extensions.validators import HexValidator
-
-
-# NOTE: it could be moved to separte file, but for clear review define it here
-class AsciiHexValidator(HexValidator):
-    def __call__(self, value):
-        # remove hash before validation
-        if not value.startswith('#'):
-            raise ValidationError(
-                'Описание цвета должно начинаться с символа "#"'
-            )
-        value = value[1:]
-        try:
-            # HexValidator use binascii.unhexlify method, which does not
-            # support non ascii symbols. So now it tries to convert data
-            # to expected format
-            value.encode('ascii')
-        except UnicodeError:
-            raise ValidationError('Поддерживаются только ASCII символы')
-        try:
-            super(AsciiHexValidator, self).__call__(value)
-        except ValidationError:
-            raise ValidationError('Некорректное значение цвета')
 
 
 class Tag(models.Model):
@@ -39,7 +16,15 @@ class Tag(models.Model):
     color = models.CharField(
         'Цвет',
         max_length=7,
-        validators=[AsciiHexValidator()],
+        validators=[
+            RegexValidator(
+                regex='^#[a-zA-Z0-9]{6}$',
+                message=(
+                    'Цвет должен быть представлен HEX кодом, например: #f54fa6'
+                ),
+                code='invalid_color'
+            )
+        ]
     )
 
     class Meta:
