@@ -19,6 +19,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'favorite_score',
     )
     search_fields = ('name',)
+    filter_horizontal = ('tags',)
     list_filter = ('name', 'author', 'tags')
     empty_value_display = '-пусто-'
 
