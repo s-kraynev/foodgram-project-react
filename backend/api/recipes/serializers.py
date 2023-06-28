@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject
@@ -59,54 +60,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return Recipe.is_in_shopping_cart(obj, self.context['request'].user.id)
 
 
-class UsedIngredientCreateSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(
-        required=True, queryset=Ingredient.objects.all()
-    )
-    amount = serializers.IntegerField(required=True)
-
-    class Meta:
-        model = UsedIngredient
-        fields = ('id', 'amount')
-
-    def to_representation(self, instance):
-        ret = OrderedDict()
-        fields = self._readable_fields
-
-        for field in fields:
-            try:
-                # custom handling for amount
-                if field.field_name == 'amount':
-                    attribute = (
-                        instance.used_ingredient.filter(
-                            recipe=self.root.instance
-                        )
-                        .get()
-                        .amount
-                    )
-                else:
-                    attribute = field.get_attribute(instance)
-            except SkipField:
-                continue
-
-            # We skip `to_representation` for `None` values so that fields do
-            # not have to explicitly deal with that case.
-            #
-            # For related fields with `use_pk_only_optimization` we need to
-            # resolve the pk value.
-            check_for_none = (
-                attribute.pk
-                if isinstance(attribute, PKOnlyObject)
-                else attribute
-            )
-            if check_for_none is None:
-                ret[field.field_name] = None
-            else:
-                ret[field.field_name] = field.to_representation(attribute)
-
-        return ret
-
-
 class RecipeWriteSerializer(serializers.ModelSerializer):
     # NOTE: it was already allow_null=False on previous review too :)
     image = Base64ImageField(required=True, allow_null=False)
@@ -116,7 +69,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             required=True, queryset=Tag.objects.all()
         ),
     )
-    ingredients = UsedIngredientCreateSerializer(many=True, required=True)
+    ingredients = serializers.ListSerializer(
+        child=serializers.JSONField(),
+    )
 
     class Meta:
         model = Recipe
@@ -126,6 +81,45 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'pub_date',
         )
 
+    def validate_ingredients(self, value):
+        unique_ingredients = []
+        if len(value) < 0:
+            raise serializers.ValidationError(
+                'Нельзя создать рецепт без ингредиентов.'
+            )
+        for data_ingredient in value:
+            ingredient = get_object_or_404(
+                Ingredient,
+                id=data_ingredient.get('id')
+            )
+            if ingredient in unique_ingredients:
+                raise serializers.ValidationError(
+                    f'Дублируется {ingredient.name}, пожалуйста оставьте один'
+                    ' ингредиент.'
+                )
+            unique_ingredients.append(ingredient)
+            if int(data_ingredient.get('amount')) < 0:
+                raise serializers.ValidationError(
+                    'Вы ввели некорректное значение ('
+                    f'{data_ingredient.get("amount")}) для {ingredient.name}'
+                )
+        return value
+
+    def to_representation(self, instance):
+        serialized_ingredients = [
+            {
+                'id': ingredient.ingredient.id,
+                'amount': ingredient.amount,
+            }
+            for ingredient in instance.recipe.all()
+        ]
+        serialized_data = super(RecipeWriteSerializer, self).to_representation(
+            instance
+        )
+        serialized_data['ingredients'] = serialized_ingredients
+
+        return serialized_data
+
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -133,11 +127,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         for tag in tags:
             recipe.tags.add(tag)
         for ingredient in ingredients:
+            db_ingredient = get_object_or_404(
+                Ingredient,
+                id=ingredient.get('id')
+            )
             UsedIngredient.objects.create(
                 **{
                     'recipe': recipe,
                     'amount': ingredient['amount'],
-                    'ingredient': ingredient['id'],
+                    'ingredient': db_ingredient,
                 }
             )
         return recipe
@@ -159,11 +157,15 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             )
             used_ingr.delete()
         for ingredient in ingredients:
+            db_ingredient = get_object_or_404(
+                Ingredient,
+                id=ingredient.get('id')
+            )
             UsedIngredient.objects.create(
                 **{
                     'recipe': instance,
                     'amount': ingredient['amount'],
-                    'ingredient': ingredient['id'],
+                    'ingredient': db_ingredient,
                 }
             )
 
