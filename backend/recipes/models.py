@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 
@@ -26,12 +25,12 @@ User = get_user_model()
 # also I tried to change it in model to recipes.UsedIngredient,
 # but in this case it does not catch the changes (sender was also changed to
 # Recipe.ingredients.through)
-#from django.db.models.signals import m2m_changed, pre_save
-#from django.dispatch import receiver
+# from django.db.models.signals import m2m_changed, pre_save
+# from django.dispatch import receiver
 #
 #
-#@receiver([m2m_changed], sender='recipes.UsedIngredient')
-#def validate_ingredients(sender, **kwargs):
+# @receiver([m2m_changed], sender='recipes.UsedIngredient')
+# def validate_ingredients(sender, **kwargs):
 #    instance = kwargs['instance']
 #    import pdb; pdb.set_trace()
 #    if instance.ingredients.count() < 1:

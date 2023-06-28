@@ -1,9 +1,5 @@
-from collections import OrderedDict
-
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.fields import SkipField
-from rest_framework.relations import PKOnlyObject
 
 from api.common.serializer_fields import Base64ImageField
 from api.tags.serializers import TagSerializer
@@ -89,8 +85,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             )
         for data_ingredient in value:
             ingredient = get_object_or_404(
-                Ingredient,
-                id=data_ingredient.get('id')
+                Ingredient, id=data_ingredient.get('id')
             )
             if ingredient in unique_ingredients:
                 raise serializers.ValidationError(
@@ -128,8 +123,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             recipe.tags.add(tag)
         for ingredient in ingredients:
             db_ingredient = get_object_or_404(
-                Ingredient,
-                id=ingredient.get('id')
+                Ingredient, id=ingredient.get('id')
             )
             UsedIngredient.objects.create(
                 **{
@@ -158,8 +152,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             used_ingr.delete()
         for ingredient in ingredients:
             db_ingredient = get_object_or_404(
-                Ingredient,
-                id=ingredient.get('id')
+                Ingredient, id=ingredient.get('id')
             )
             UsedIngredient.objects.create(
                 **{
