@@ -1,6 +1,5 @@
-from collections import defaultdict
-
 from django.contrib.auth import get_user_model
+from django.db.models import F, Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -133,23 +132,21 @@ class ShoppingCartViewSet(ViewSet):
 
 @api_view(['GET'])
 def download_ingredients(request):
-    shopping_records = ShoppingCart.objects.filter(user=request.user)
-    ingredients_to_buy = defaultdict(int)
-    # group ingredients by name
-    for shopping_record in shopping_records:
-        for ingredient in shopping_record.recipe.ingredients.all():
-            key = (
-                ingredient.name,
-                ingredient.measurement_unit,
-            )
-            used_ingredint = UsedIngredient.objects.get(
-                ingredient=ingredient, recipe=shopping_record.recipe
-            )
-            ingredients_to_buy[key] += used_ingredint.amount
-    # prepare final list of ingredients
+    used_ingredients = UsedIngredient.objects.filter(
+        recipe__shopping_recipe__user=request.user
+    )
+    result = used_ingredients.values(
+        'ingredient__name', 'ingredient__measurement_unit'
+    ).annotate(
+        name=F('ingredient__name'),
+        measurement_unit=F('ingredient__measurement_unit'),
+        amount=Sum('amount')
+    )
     output_text = []
-    for key, amount in ingredients_to_buy.items():
-        output_text.append(f'{key[0]} ({key[1]}) - {amount}')
+    for res in result:
+        output_text.append(
+            f'{res["name"]} ({res["measurement_unit"]}) - {res["amount"]}'
+        )
     result = generate_pdf_file(output_text)
     return FileResponse(
         result, as_attachment=True, filename='Список_покупок.pdf'
