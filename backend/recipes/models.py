@@ -7,36 +7,10 @@ from tags.models import Tag
 
 User = get_user_model()
 
-# NOTE: I finally failed to add validation to admin panel for ManytoMany
-# fields.
-# it's not possible to do it via "clean" method, because:
-# https://code.djangoproject.com/ticket/19671
-# it's not possible to check M2M before save
-
-# I found some attempts to do validation via signals, but it also failed for me
-# more over if I will catch signal, I could not handle validation clearly,
-# because:
-# - raised validation crush admin page and show error
-# - m2m_changed supports only pre_add and on creation when we have not
-# ingredients it will not catch the error :(
-# The below code tries to handle some cases during debug, but it failed with
-# suggested sender: Recipe.ingredients.through (it expects app_name, Model),
-# but in Model we specify through as string without app name :)
-# also I tried to change it in model to recipes.UsedIngredient,
-# but in this case it does not catch the changes (sender was also changed to
-# Recipe.ingredients.through)
-# from django.db.models.signals import m2m_changed, pre_save
-# from django.dispatch import receiver
-#
-#
-# @receiver([m2m_changed], sender='recipes.UsedIngredient')
-# def validate_ingredients(sender, **kwargs):
-#    instance = kwargs['instance']
-#    import pdb; pdb.set_trace()
-#    if instance.ingredients.count() < 1:
-#        raise ValidationError('Нельзя создать рецепт без ингредиентов')
-#    if instance.ingredients.count() > instance.ingredients.distinct().count():
-#        raise ValidationError('Не дублируй ингредиенты')
+# I will try to use it tomorrow:
+# https://docs.djangoproject.com/en/4.2/topics/forms/formsets/
+# on the first look I did not find how formsets should connect to current
+# model.
 
 
 class Recipe(models.Model):
