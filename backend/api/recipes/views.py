@@ -46,28 +46,14 @@ class RecipeViewSet(DenyPutViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
-class FavoriteViewSet(ViewSet):
-    queryset = Favorite.objects.all()
-
     def get_recipe(self):
-        return get_object_or_404(Recipe, id=self.kwargs.get('id'))
+        return get_object_or_404(Recipe, id=self.kwargs.get('pk'))
 
-    # NOTE: I could not use:
-    # https://www.django-rest-framework.org/api-guide/viewsets/#viewset-actions
-    # because I need to call DELETE/POST on the same url.
-    # destroy expects <pk> in url, and when I tried to override these methods,
-    # I got error, that it's not allowed to call DELETE on url /favorite.
-    # I did not find another way to handle it except the current implementation
-    # NOTE: I fight with it about 3 days, and did not find clear solution,
-    # so prefer to follow existing one if I have not clear example how to do
-    # it differently.
     @action(
         methods=['POST'],
-        detail=False,
-        url_path='favorite',
+        detail=True,
     )
-    def makes_favorite(self, request, **kwargs):
+    def favorite(self, request, **kwargs):
         user = request.user
         input_serializer = FavoriteSerializer(
             user, data=request.data, context={'request': request}
@@ -81,7 +67,7 @@ class FavoriteViewSet(ViewSet):
         Favorite.objects.create(user=user, recipe=recipe)
         return Response(output_serializer.data, status=status.HTTP_200_OK)
 
-    @makes_favorite.mapping.delete
+    @favorite.mapping.delete
     def delete_favorite(self, request, **kwargs):
         user = request.user
         serializer = FavoriteSerializer(
@@ -96,19 +82,11 @@ class FavoriteViewSet(ViewSet):
         Favorite.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-class ShoppingCartViewSet(ViewSet):
-    queryset = ShoppingCart.objects.all()
-
-    def get_recipe(self):
-        return get_object_or_404(Recipe, id=self.kwargs.get('id'))
-
     @action(
         methods=['POST'],
-        detail=False,
-        url_path='shopping_cart',
+        detail=True,
     )
-    def add_to_shopping_cart(self, request, **kwargs):
+    def shopping_cart(self, request, **kwargs):
         user = request.user
         recipe = self.get_recipe()
         serializer = ShortRecipeSerializer(
@@ -118,7 +96,7 @@ class ShoppingCartViewSet(ViewSet):
         ShoppingCart.objects.create(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @add_to_shopping_cart.mapping.delete
+    @shopping_cart.mapping.delete
     def remove_from_shopping_cart(self, request, **kwargs):
         user = request.user
         recipe = self.get_recipe()
@@ -140,7 +118,7 @@ def download_ingredients(request):
     ).annotate(
         name=F('ingredient__name'),
         measurement_unit=F('ingredient__measurement_unit'),
-        amount=Sum('amount')
+        amount=Sum('amount'),
     )
     output_text = []
     for res in result:

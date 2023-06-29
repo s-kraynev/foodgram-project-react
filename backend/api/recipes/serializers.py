@@ -157,7 +157,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             )
 
         return super(RecipeWriteSerializer, self).update(
-            instance, validated_data)
+            instance, validated_data
+        )
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

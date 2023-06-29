@@ -69,9 +69,8 @@ class Follow(models.Model):
             # NOTE: This constraint is good, but it crushes admin page.
             # So I would leave clean method as well.
             models.CheckConstraint(
-                name='author_is_not_the_same_user',
-                check=~Q(user=F('author'))
-            )
+                name='author_is_not_the_same_user', check=~Q(user=F('author'))
+            ),
         )
 
     def __str__(self):
