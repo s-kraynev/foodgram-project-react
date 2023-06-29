@@ -18,7 +18,8 @@ class Tag(models.Model):
         max_length=7,
         validators=[
             RegexValidator(
-                regex='^#[a-zA-Z0-9]{6}$',
+                # undescrore is also allowed here. it's just ignored
+                regex='^#\w{6}$',
                 message=(
                     'Цвет должен быть представлен HEX кодом, например: #f54fa6'
                 ),
