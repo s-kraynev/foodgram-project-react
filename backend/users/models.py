@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import F, Q
 
 
 class User(AbstractUser):
@@ -17,8 +18,6 @@ class User(AbstractUser):
         unique=True,
         verbose_name='Почта',
     )
-    # NOTE: redefine password, because it has custom length <=150
-    # the default value is a <=128
     password = models.CharField(
         max_length=settings.MID_SMALL_INT_LENGTH,
         verbose_name='Пароль',
@@ -59,14 +58,6 @@ class Follow(models.Model):
     class Meta:
         verbose_name = 'Подписчик'
         verbose_name_plural = 'Подписчики'
-        # NOTE: looks like I was wrong about Follow class. I told about Users
-        # part, but the Follow I took from old work. However, it was also
-        # reviewed it :)
-        # https://github.com/s-kraynev/hw05_final/blob/master/yatube/posts/
-        # models.py#L103
-        # In group I found the right version, but this particular comment was
-        # fixed not by me and I forgot about it after review in group project.
-        # so it is my shame.
         constraints = (
             models.UniqueConstraint(
                 fields=(
@@ -75,6 +66,12 @@ class Follow(models.Model):
                 ),
                 name='unique subscriber',
             ),
+            # NOTE: This constraint is good, but it crushes admin page.
+            # So I would leave clean method as well.
+            models.CheckConstraint(
+                name='author_is_not_the_same_user',
+                check=~Q(user=F('author'))
+            )
         )
 
     def __str__(self):
