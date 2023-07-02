@@ -19,7 +19,7 @@ class Tag(models.Model):
         validators=[
             RegexValidator(
                 # undescrore is also allowed here. it's just ignored
-                regex=r'^#\w{6}$',
+                regex=r'^#\w{2,6}$',
                 message=(
                     'Цвет должен быть представлен HEX кодом, например: #f54fa6'
                 ),
